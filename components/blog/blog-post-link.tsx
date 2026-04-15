@@ -23,10 +23,10 @@ export function BlogPostLink({
         className,
       )}
     >
-      <span className="text-foreground truncate group-hover:text-primary">
+      <span className="text-foreground group-hover:text-primary truncate font-medium">
         {title}
       </span>
-      <span className="text-foreground/50 shrink-0 font-mono text-xs font-light group-hover:text-primary">
+      <span className="text-muted-foreground group-hover:text-primary shrink-0 font-mono text-[10px] tracking-widest uppercase">
         {formatPostDate(publishedAt)}
       </span>
     </Link>

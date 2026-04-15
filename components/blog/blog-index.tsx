@@ -41,7 +41,7 @@ export function BlogIndex({ posts }: BlogIndexProps) {
           Search posts by title
         </label>
         <IconSearch
-          className="text-foreground/40 pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
+          className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
           aria-hidden
         />
         <input
@@ -49,10 +49,10 @@ export function BlogIndex({ posts }: BlogIndexProps) {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Filter by title…"
+          placeholder="FILTER_BY_TITLE"
           className={cn(
-            "border-border bg-background text-foreground w-full rounded-md border py-2.5 pr-3 pl-10 text-sm",
-            "placeholder:text-muted-foreground",
+            "border-border bg-background text-foreground w-full rounded-md border px-3 py-2 font-mono text-xs",
+            "placeholder:text-muted-foreground/50",
             "focus:border-primary focus:ring-primary focus:ring-1 focus:outline-none",
           )}
           autoComplete="off"

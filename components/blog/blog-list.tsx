@@ -19,10 +19,10 @@ export function BlogList({ posts }: BlogListProps) {
           key={index}
           className="group flex items-center justify-between gap-20 transition-colors duration-200 md:gap-20"
         >
-          <span className="text-foreground group-hover:text-primary truncate">
+          <span className="text-foreground group-hover:text-primary truncate font-medium">
             {post.title}
           </span>
-          <span className="text-foreground/50 group-hover:text-primary shrink-0 font-mono text-xs font-light">
+          <span className="text-muted-foreground group-hover:text-primary shrink-0 font-mono text-[10px] tracking-widest uppercase">
             {post.publishedAt
               ? format(new Date(post.publishedAt), "MMM d, yyyy")
               : ""}

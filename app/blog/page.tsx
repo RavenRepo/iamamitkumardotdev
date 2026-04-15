@@ -30,14 +30,10 @@ export default async function BlogPage() {
     }));
 
   return (
-    <Container>
-      <p className="text-foreground pt-4 text-base">
-        This is where I write about what I&apos;m building, what I&apos;m testing,
-        and what I&apos;m learning while shipping products in public.
-      </p>
-      <p className="text-foreground pt-4 text-base">
-        Expect founder notes, technical breakdowns, launch experiments, and
-        playbooks from real execution.
+    <Container className="flex-1">
+      <p className="text-muted-foreground pt-4 font-mono text-xs tracking-widest uppercase">
+        FOUNDER NOTES, BUILD LOGS, AND TECHNICAL WRITING ON SHIPPING PRODUCTS,
+        AI SYSTEMS, AND GROWTH EXPERIMENTS.
       </p>
 
       <BlogIndex posts={indexPosts} />

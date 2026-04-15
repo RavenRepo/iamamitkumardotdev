@@ -123,6 +123,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={cn(
         inter.variable,
         schibstedGrotesk.variable,
@@ -140,7 +141,7 @@ export default function RootLayout({ children }) {
         />
         <Settings />
         <Navbar />
-        <main>
+        <main className="flex min-h-screen flex-col">
           <Providers>{children}</Providers>
         </main>
         <Footer />

@@ -11,6 +11,7 @@ export type BlogArticleFrontMatter = {
   publishedAt: string;
   summary?: string;
   readingTime?: { text: string };
+  author?: string;
 };
 
 type BlogArticleShellProps = {
@@ -27,26 +28,35 @@ export function BlogArticleShell({
   return (
     <Container>
       <article className="pt-4">
-        <h2 className="text-primary pt-3 font-medium tracking-tight">
+        <h2 className="text-primary pt-3 font-mono text-2xl font-bold tracking-widest uppercase">
           {frontMatter.title}
         </h2>
         {frontMatter.summary ? (
-          <p className="text-foreground/70 pt-3 text-sm leading-relaxed">
+          <p className="text-muted-foreground pt-3 font-mono text-xs leading-relaxed tracking-widest uppercase">
             {frontMatter.summary}
           </p>
         ) : null}
-        <div className="text-foreground/50 mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono text-xs">
-          <span>Amit Kumar</span>
+        <div className="text-foreground/50 mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono text-[10px] tracking-widest uppercase">
+          <span className="text-primary">
+            {frontMatter.author || "Amit Kumar"}
+          </span>
           <span aria-hidden className="text-foreground/30">
             ·
           </span>
-          <time dateTime={frontMatter.publishedAt}>{dateLabel}</time>
+          <time
+            dateTime={frontMatter.publishedAt}
+            className="text-muted-foreground"
+          >
+            {dateLabel}
+          </time>
           {frontMatter.readingTime?.text ? (
             <>
               <span aria-hidden className="text-foreground/30">
                 ·
               </span>
-              <span>{frontMatter.readingTime.text}</span>
+              <span className="text-muted-foreground">
+                {frontMatter.readingTime.text}
+              </span>
             </>
           ) : null}
         </div>
