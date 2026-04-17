@@ -2,6 +2,30 @@ import type { Metadata } from "next";
 import Container from "@/components/container";
 import { DottedSeparator } from "@/components/separator";
 import { Subheading } from "@/components/subheading";
+import React from "react";
+import {
+  IconBrain,
+  IconBrandBun,
+  IconBrandGithubCopilot,
+  IconBrandNodejs,
+  IconBrandPython,
+  IconBrandRust,
+  IconBrandTypescript,
+  IconBrandVscode,
+  IconCoffee,
+  IconDatabase,
+  IconBrandSupabase,
+  IconTerminal2,
+  IconPrompt,
+  IconTerminal,
+  IconCommand,
+  IconAppWindow,
+  IconBrandDocker,
+  IconNotebook,
+  IconCloud,
+  IconBolt,
+  IconBrandOpenai,
+} from "@tabler/icons-react";
 
 export const metadata: Metadata = {
   title: "Workflow - Amit Kumar",
@@ -16,62 +40,62 @@ const sections = [
   {
     title: "AI Code Assistants",
     items: [
-      { label: "OpenCode", description: "Primary AI code assistant" },
-      { label: "Claude", description: "Secondary AI assistant — Hermes configured" },
-      { label: "GitHub Copilot", description: "Tertiary inline completions" },
-      { label: "Cursor Agent", description: "IDE-level alternative when needed" },
+      { icon: IconTerminal2, label: "OpenCode", description: "Primary AI code assistant" },
+      { icon: IconBrandOpenai, label: "Claude", description: "Secondary AI assistant — Hermes configured" },
+      { icon: IconBrandGithubCopilot, label: "GitHub Copilot", description: "Tertiary inline completions" },
+      { icon: IconPrompt, label: "Cursor Agent", description: "IDE-level alternative when needed" },
     ],
   },
   {
     title: "Memory & AI Systems",
     items: [
-      { label: "NotebookLM", description: "Deep context and RAG for long documents" },
-      { label: "Hermes + Hindsight", description: "Custom agent with cloud memory layer" },
-      { label: "Supermemory", description: "Persistent knowledge layer" },
-      { label: "Ruflo", description: "Custom MCP: agent orchestration layer" },
-      { label: "fullstackskills", description: "Custom MCP: 21-agent scaffolding system" },
-      { label: "Context7", description: "Custom MCP: live docs retrieval inside chat" },
+      { icon: IconNotebook, label: "NotebookLM", description: "Deep context and RAG for long documents" },
+      { icon: IconCloud, label: "Hermes + Hindsight", description: "Custom agent with cloud memory layer" },
+      { icon: IconBrain, label: "Supermemory", description: "Persistent knowledge layer" },
+      { icon: IconTerminal, label: "Ruflo", description: "Custom MCP: agent orchestration layer" },
+      { icon: IconTerminal, label: "fullstackskills", description: "Custom MCP: 21-agent scaffolding system" },
+      { icon: IconTerminal, label: "Context7", description: "Custom MCP: live docs retrieval inside chat" },
     ],
   },
   {
     title: "Languages & Runtimes",
     items: [
-      { label: "Node.js / pnpm", description: "Primary JS runtime and package manager" },
-      { label: "Rust / cargo", description: "Systems programming and CLI tooling" },
-      { label: "Bun", description: "Fast JS runtime for edge-ready scripts" },
-      { label: "Python / uv", description: "AI/ML scripts, fast dependency management" },
-      { label: "Java / SDKMAN", description: "Enterprise integrations and JVM tooling" },
-      { label: "TypeScript", description: "Strict typing across the entire stack" },
+      { icon: IconBrandNodejs, label: "Node.js / pnpm", description: "Primary JS runtime and package manager" },
+      { icon: IconBrandRust, label: "Rust / cargo", description: "Systems programming and CLI tooling" },
+      { icon: IconBrandBun, label: "Bun", description: "Fast JS runtime for edge-ready scripts" },
+      { icon: IconBrandPython, label: "Python / uv", description: "AI/ML scripts, fast dependency management" },
+      { icon: IconCoffee, label: "Java / SDKMAN", description: "Enterprise integrations and JVM tooling" },
+      { icon: IconBrandTypescript, label: "TypeScript", description: "Strict typing across the entire stack" },
     ],
   },
   {
     title: "Editors",
     items: [
-      { label: "VS Code", description: "Primary editor with full extension ecosystem" },
-      { label: "Zed", description: "Fast, GPU-accelerated editor for focused sessions" },
-      { label: "Neovim", description: "Terminal-native editing and scripting" },
-      { label: "Cursor", description: "AI-native editor for high-context sessions" },
+      { icon: IconBrandVscode, label: "VS Code", description: "Primary editor with full extension ecosystem" },
+      { icon: IconAppWindow, label: "Zed", description: "Fast, GPU-accelerated editor for focused sessions" },
+      { icon: IconTerminal, label: "Neovim", description: "Terminal-native editing and scripting" },
+      { icon: IconPrompt, label: "Cursor", description: "AI-native editor for high-context sessions" },
     ],
   },
   {
     title: "DevOps & Databases",
     items: [
-      { label: "Podman", description: "Rootless container runtime — primary choice" },
-      { label: "PostgreSQL", description: "OLTP workhorse for relational data" },
-      { label: "Supabase", description: "Backend-as-a-service with Postgres" },
-      { label: "Redis", description: "Caching, pub/sub, and session store" },
-      { label: "NeonDB", description: "Serverless Postgres for edge workloads" },
+      { icon: IconBrandDocker, label: "Podman", description: "Rootless container runtime — primary choice" },
+      { icon: IconDatabase, label: "PostgreSQL", description: "OLTP workhorse for relational data" },
+      { icon: IconBrandSupabase, label: "Supabase", description: "Backend-as-a-service with Postgres" },
+      { icon: IconDatabase, label: "Redis", description: "Caching, pub/sub, and session store" },
+      { icon: IconDatabase, label: "NeonDB", description: "Serverless Postgres for edge workloads" },
     ],
   },
   {
     title: "Terminal & Power Tools",
     items: [
-      { label: "zsh + Starship", description: "Shell and prompt for maximum clarity" },
-      { label: "RTK", description: "Custom token killer — 60–90% token savings on dev ops" },
-      { label: "lazygit", description: "Terminal UI for git — fast and visual" },
-      { label: "eza", description: "Modern ls replacement with icons" },
-      { label: "rclone", description: "Cloud storage sync and backup automation" },
-      { label: "ngrok", description: "Instant secure tunnels for local dev" },
+      { icon: IconTerminal, label: "zsh + Starship", description: "Shell and prompt for maximum clarity" },
+      { icon: IconBolt, label: "RTK", description: "Custom token killer — 60–90% token savings on dev ops" },
+      { icon: IconCommand, label: "lazygit", description: "Terminal UI for git — fast and visual" },
+      { icon: IconCommand, label: "eza", description: "Modern ls replacement with icons" },
+      { icon: IconCloud, label: "rclone", description: "Cloud storage sync and backup automation" },
+      { icon: IconCloud, label: "ngrok", description: "Instant secure tunnels for local dev" },
     ],
   },
 ];
@@ -95,17 +119,23 @@ export default function WorkflowPage() {
               <Subheading>{section.title}</Subheading>
               
               <div className="flex flex-col gap-3">
-                {section.items.map((item) => (
-                  <div key={item.label} className="flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2">
-                    <p className="text-foreground font-medium shrink-0">
-                      {item.label}
-                    </p>
-                    <div className="hidden size-1 rounded-full bg-neutral-200 dark:bg-neutral-800 md:block" />
-                    <p className="text-foreground/70 text-balance">
-                      {item.description}
-                    </p>
-                  </div>
-                ))}
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.label} className="group flex flex-col items-start gap-1.5 md:flex-row md:items-center md:gap-2">
+                      <div className="flex shrink-0 items-center gap-2">
+                        <Icon className="text-foreground/50 size-4 transition-colors group-hover:text-foreground" stroke={1.5} />
+                        <p className="text-foreground font-medium">
+                          {item.label}
+                        </p>
+                      </div>
+                      <div className="hidden size-1 rounded-full bg-neutral-200 dark:bg-neutral-800 md:block" />
+                      <p className="text-foreground/70 text-balance">
+                        {item.description}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}
