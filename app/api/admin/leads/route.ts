@@ -14,11 +14,11 @@ export async function GET(req: NextRequest) {
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
       { error: "Too many requests. Please try again later." },
-      { status: 429 }
+      { status: 429 },
     );
   }
 
-  const { authorized, response } = await requireAdmin();
+  const { authorized, response } = await requireAdmin(req);
   if (!authorized) return response;
 
   const { searchParams } = new URL(req.url);
@@ -36,6 +36,9 @@ export async function GET(req: NextRequest) {
       newsletterSubscribers,
     });
   } catch {
-    return NextResponse.json({ error: "Failed to fetch leads" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch leads" },
+      { status: 500 },
+    );
   }
 }

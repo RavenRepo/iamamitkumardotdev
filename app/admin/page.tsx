@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import { signInWithEmail } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,20 +20,14 @@ export default function AdminLogin() {
     setError("");
 
     try {
-      console.log("Attempting login with:", email);
-      const result = await authClient.signIn.email({
-        email,
-        password,
-      });
-      console.log("Login result:", result);
+      const { error: authError } = await signInWithEmail(email, password);
 
-      if (result.error) {
-        setError(result.error.message || "Failed to authenticate");
+      if (authError) {
+        setError(authError.message || "Failed to authenticate");
       } else {
         window.location.href = "/admin/dashboard";
       }
     } catch (err: unknown) {
-      console.error("Login error:", err);
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
       setError(errorMessage);
     } finally {

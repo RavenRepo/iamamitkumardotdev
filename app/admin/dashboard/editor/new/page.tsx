@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { authClient } from "@/lib/auth-client";
+import { useAuth } from "@/lib/auth";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +26,7 @@ import { ToastContainer } from "@/components/ui/toast-container";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 
 export default function Editor() {
-  const { data: session } = authClient.useSession();
+  const { session } = useAuth();
   const { toasts, addToast, dismiss } = useToast();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");

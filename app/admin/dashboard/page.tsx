@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { authClient } from "@/lib/auth-client";
+import { useAuth } from "@/lib/auth";
 import Link from "next/link";
 import { Plus, Edit2, FileText, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ interface PaginationInfo {
 }
 
 export default function AdminDashboard() {
-  const { data: session } = authClient.useSession();
+  const { session } = useAuth();
   const [posts, setPosts] = useState<AdminPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);

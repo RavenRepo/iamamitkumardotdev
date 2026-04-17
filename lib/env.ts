@@ -1,8 +1,12 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
+  NEXT_PUBLIC_PROJECT_URL: z.string().url().optional(),
+  NEXT_PUBLIC_ANON_KEY: z.string().min(1).optional(),
   PROJECT_URL: z.string().url(),
   ANON_KEY: z.string().min(1),
   SERVICE_ROLE: z.string().min(1),
@@ -15,8 +19,7 @@ const envSchema = z.object({
   NOTION_PARENT_PAGE_ID: z.string().optional(),
   NOTION_REVIEW_PARENT_PAGE_ID: z.string().optional(),
   OPENCLAW_API_KEY: z.string().optional(),
-  BETTER_AUTH_URL: z.string().url().optional(),
-  BETTER_AUTH_SECRET: z.string().min(1).optional(),
+
   REDIS_URL: z.string().url().optional(),
 });
 
@@ -31,11 +34,11 @@ export function getEnv(): Env {
 
   if (!result.success) {
     const errors = result.error.issues.map(
-      (issue) => `${issue.path.join(".")}: ${issue.message}`
+      (issue) => `${issue.path.join(".")}: ${issue.message}`,
     );
     throw new Error(
       `❌ Invalid environment variables:\n${errors.join("\n")}\n\n` +
-        `Add these to your .env file. Check .env.example for reference.`
+        `Add these to your .env file. Check .env.example for reference.`,
     );
   }
 
