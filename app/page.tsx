@@ -7,6 +7,7 @@ import { Companies } from "@/components/companies";
 import { getPublishedPosts } from "@/lib/blog";
 import { BlogList } from "@/components/blog/blog-list";
 import { WorkWithMe } from "@/components/work-with-me";
+import { VidoTask } from "@/components/vidotask";
 
 export const metadata: Metadata = {
   title: "Amit Kumar",
@@ -26,6 +27,8 @@ export default async function Home() {
       <DottedSeparator className="my-10" />
       <Work />
       <DottedSeparator className="my-10" />
+      <VidoTask />
+      <DottedSeparator className="my-10" />
       <Companies />
       <DottedSeparator className="my-10" />
       <WorkWithMe />
@@ -35,3 +38,4 @@ export default async function Home() {
     </Container>
   );
 }
+
