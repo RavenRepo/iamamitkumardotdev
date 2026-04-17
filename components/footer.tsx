@@ -15,7 +15,7 @@ export const Footer = () => {
         <div className="flex flex-col items-center gap-1.5">
           <div className="text-foreground/40 text-center text-sm text-balance">
             Built in public by an indie hacker. Here&apos;s the{" "}
-            <LinkPreview url="https://github.com/ravenrepo">code</LinkPreview>{" "}
+            <LinkPreview url="https://github.com/designerdada/Designerdadacom">code</LinkPreview>{" "}
             and{" "}
             <LinkPreview url="https://substack.com/@growthperclick">
               launch notes
