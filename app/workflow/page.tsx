@@ -5,7 +5,7 @@ import { Subheading } from "@/components/subheading";
 import React from "react";
 import {
   IconBrain,
-  IconBrandBun,
+  IconBrandBunpo,
   IconBrandGithubCopilot,
   IconBrandNodejs,
   IconBrandPython,
@@ -62,7 +62,7 @@ const sections = [
     items: [
       { icon: IconBrandNodejs, label: "Node.js / pnpm", description: "Primary JS runtime and package manager" },
       { icon: IconBrandRust, label: "Rust / cargo", description: "Systems programming and CLI tooling" },
-      { icon: IconBrandBun, label: "Bun", description: "Fast JS runtime for edge-ready scripts" },
+      { icon: IconBrandBunpo, label: "Bun", description: "Fast JS runtime for edge-ready scripts" },
       { icon: IconBrandPython, label: "Python / uv", description: "AI/ML scripts, fast dependency management" },
       { icon: IconCoffee, label: "Java / SDKMAN", description: "Enterprise integrations and JVM tooling" },
       { icon: IconBrandTypescript, label: "TypeScript", description: "Strict typing across the entire stack" },
