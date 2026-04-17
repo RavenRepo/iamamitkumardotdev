@@ -95,15 +95,6 @@ export const VidoTask = () => {
         </p>
       </div>
 
-      {/* Status line — inline, no box */}
-      <p className="text-foreground/40 mt-3 flex items-center gap-1.5 text-sm">
-        <span className="relative flex size-1.5 shrink-0">
-          <span className="absolute inline-flex size-full animate-ping rounded-full bg-amber-400 opacity-75" />
-          <span className="relative inline-flex size-1.5 rounded-full bg-amber-500" />
-        </span>
-        5 parallel projects · in development · coming soon
-      </p>
-
       {/* Body — plain prose, exactly like header.tsx */}
       <div className="mt-6 flex flex-col gap-4">
         <p className="text-foreground/70 text-base">
