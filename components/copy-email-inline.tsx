@@ -12,7 +12,7 @@ type CopyEmailInlineProps = {
 
 export function CopyEmailInline({
   children,
-  email = "hi@iamamitkumar.dev",
+  email = "amit.quicksoft@gmail.com",
 }: CopyEmailInlineProps) {
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
