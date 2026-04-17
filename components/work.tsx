@@ -32,7 +32,8 @@ const workItems = [
   {
     href: "https://launchsuite.tech",
     title: "LaunchSuite.tech",
-    description: "My shipped SaaS boilerplate MVP for founders, launched in public.",
+    description:
+      "My shipped SaaS boilerplate MVP for founders, launched in public.",
     icon: (
       <LogoSVGNew className="size-4 text-white drop-shadow-xl drop-shadow-black/40" />
     ),
@@ -41,7 +42,8 @@ const workItems = [
   {
     href: "https://www.producthunt.com",
     title: "Product Launches",
-    description: "I ship fast, launch publicly, and validate demand with real users.",
+    description:
+      "I ship fast, launch publicly, and validate demand with real users.",
     icon: (
       <LogoSVGNew className="size-4 text-white drop-shadow-xl drop-shadow-black/40" />
     ),
@@ -51,7 +53,8 @@ const workItems = [
   {
     href: "https://x.com/growthperclick",
     title: "Build in Public",
-    description: "Daily experiments on distribution, product, and growth loops.",
+    description:
+      "Daily experiments on distribution, product, and growth loops.",
     icon: (
       <IconBrandYoutube className="size-4 text-white drop-shadow-xl drop-shadow-black/40" />
     ),
@@ -69,12 +72,16 @@ export const Work = () => {
             key={item.href}
             href={item.href}
             target="_blank"
-            className="flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2"
+            className="flex flex-col gap-1 md:flex-row md:items-center md:gap-2"
           >
-            <Box className={`mr-4 ${item.boxClassName}`}>{item.icon}</Box>
-            <p className="text-foreground font-medium">{item.title}</p>
-            <div className="hidden size-1 rounded-full bg-neutral-200 md:block"></div>
-            <p className="text-foreground/70">{item.description}</p>
+            <div className={`mr-4 shrink-0 ${item.boxClassName ? "" : ""}`}>
+              <Box className={item.boxClassName}>{item.icon}</Box>
+            </div>
+            <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-2">
+              <p className="text-foreground font-medium">{item.title}</p>
+              <div className="hidden size-1 rounded-full bg-neutral-200 md:block"></div>
+              <p className="text-foreground/70">{item.description}</p>
+            </div>
           </Link>
         ))}
       </div>

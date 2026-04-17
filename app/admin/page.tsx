@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { motion } from "motion/react";
+import Container from "@/components/container";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -39,77 +42,70 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="bg-background relative flex min-h-dvh items-center justify-center overflow-hidden px-4">
+    <div className="bg-background relative flex min-h-screen items-center justify-center overflow-hidden px-4">
       <div className="bg-grid-blueprint text-foreground pointer-events-none absolute inset-0 opacity-10" />
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 w-full max-w-md"
-      >
-        <div className="bg-card border-border monolith-glass relative border p-8">
-          <div className="from-primary/5 pointer-events-none absolute inset-0 bg-linear-to-br to-transparent opacity-100" />
+      <Container className="relative z-10 max-w-md">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="bg-card border-border relative border p-8"
+        >
+          <div className="from-primary/5 pointer-events-none absolute inset-0 bg-linear-to-br to-transparent" />
 
           <div className="border-border relative z-10 mb-8 border-b pb-6 text-center">
             <h1 className="font-display text-foreground mb-2 text-2xl font-bold tracking-widest uppercase">
               SYS_ADMIN_ACCESS
             </h1>
             <p className="text-primary font-mono text-[10px] tracking-widest uppercase">
-              Restricted to authorized personnel only. Logging all attempts.
+              RESTRICTED TO AUTHORIZED PERSONNEL ONLY. LOGGING ALL ATTEMPTS.
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="relative z-10 space-y-6">
             {error && (
-              <div className="text-danger bg-danger/10 border-danger border p-3 font-mono text-xs tracking-widest uppercase">
+              <div className="bg-destructive/10 border-destructive text-destructive border p-3 font-mono text-[10px] tracking-widest uppercase">
                 [ERROR] {error}
               </div>
             )}
 
-            <div className="space-y-3">
-              <label className="text-muted-foreground block font-mono text-[10px] font-medium tracking-widest uppercase">
-                Identifier_String (Email)
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="email">IDENTIFIER_STRING (EMAIL)</Label>
+              <Input
+                id="email"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-background border-border focus:border-primary text-foreground placeholder:text-muted-foreground/30 w-full border px-4 py-3 font-mono text-sm transition-colors focus:outline-none"
-                placeholder="hello@iamamitkumar.dev"
+                placeholder="HELLO@IAMAMITKUMAR.DEV"
+                className="font-mono"
               />
             </div>
 
-            <div className="space-y-3">
-              <label className="text-muted-foreground block font-mono text-[10px] font-medium tracking-widest uppercase">
-                Access_Key (Password)
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="password">ACCESS_KEY (PASSWORD)</Label>
+              <Input
+                id="password"
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-background border-border focus:border-primary text-foreground placeholder:text-muted-foreground/30 w-full border px-4 py-3 font-mono text-sm transition-colors focus:outline-none"
                 placeholder="••••••••••••"
+                className="font-mono"
               />
             </div>
 
-            <Button
-              type="submit"
-              disabled={loading}
-              variant="outline"
-              className="mt-4 flex w-full items-center justify-center gap-3 font-mono text-xs tracking-widest uppercase"
-            >
+            <Button type="submit" disabled={loading} className="mt-4 w-full">
               {loading ? (
                 <>
-                  <span className="bg-primary h-2 w-2 animate-ping" />
+                  <span className="bg-primary mr-2 h-2 w-2 animate-ping" />
                   AUTHENTICATING_SYS...
                 </>
               ) : (
                 <>
-                  <span className="border-primary flex h-2 w-2 items-center justify-center border">
-                    <span className="bg-primary h-1 w-1 group-hover:animate-pulse" />
+                  <span className="border-primary mr-2 flex h-2 w-2 items-center justify-center border">
+                    <span className="bg-primary h-1 w-1" />
                   </span>
                   INIT_SECURE_ACCESS
                 </>
@@ -117,11 +113,10 @@ export default function AdminLogin() {
             </Button>
           </form>
 
-          {/* Decorative Corner Accents */}
           <div className="border-border absolute top-0 right-0 h-4 w-4 border-t border-r" />
           <div className="border-border absolute bottom-0 left-0 h-4 w-4 border-b border-l" />
-        </div>
-      </motion.div>
+        </motion.div>
+      </Container>
     </div>
   );
 }

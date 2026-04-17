@@ -40,7 +40,7 @@ const sections: WorkflowSection[] = [
     items: [
       { label: "NotebookLM", description: "Deep context and RAG for long documents" },
       { label: "Hermes Agent + Hindsight", description: "Custom agent with cloud memory layer" },
-      { label: "Supermemory", description: "by @DhravyaShah — persistent knowledge layer" },
+      { label: "Supermemory", description: "Persistent knowledge layer" },
     ],
   },
   {
