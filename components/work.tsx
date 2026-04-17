@@ -66,21 +66,24 @@ export const Work = () => {
   return (
     <div>
       <Subheading>Things I ship</Subheading>
-      <div className="mt-4 flex flex-col gap-6 md:gap-4">
+      <div className="mt-4 flex flex-col">
         {workItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
             target="_blank"
-            className="flex flex-col gap-1 md:flex-row md:items-center md:gap-2"
+            className="group hover:bg-muted/50 flex items-start gap-3 rounded-lg px-3 py-3 transition-colors"
           >
-            <div className={`mr-4 shrink-0 ${item.boxClassName ? "" : ""}`}>
+            <div className="shrink-0 pt-0.5">
               <Box className={item.boxClassName}>{item.icon}</Box>
             </div>
-            <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-2">
-              <p className="text-foreground font-medium">{item.title}</p>
-              <div className="hidden size-1 rounded-full bg-neutral-200 md:block"></div>
-              <p className="text-foreground/70">{item.description}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-foreground leading-snug font-medium">
+                {item.title}
+              </p>
+              <p className="text-foreground/70 mt-0.5 text-sm leading-relaxed">
+                {item.description}
+              </p>
             </div>
           </Link>
         ))}

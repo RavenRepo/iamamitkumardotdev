@@ -23,13 +23,14 @@ const cspParts = [
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.mxpnl.com https://www.googletagmanager.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "img-src 'self' data: blob: https://*.mixpanel.com https://*.google-analytics.com https://*.googletagmanager.com",
+  "img-src 'self' data: blob: https://*.mixpanel.com https://*.google-analytics.com https://*.googletagmanager.com https://avatars.githubusercontent.com https://pbs.twimg.com https://assets.aceternity.com https://api.microlink.io",
   [
     "connect-src 'self'",
     "https://*.mixpanel.com",
     "https://cdn.mxpnl.com",
     "https://*.google-analytics.com",
     "https://*.googletagmanager.com",
+    "https://api.microlink.io",
     supabaseOrigin ?? "",
   ]
     .join(" ")
