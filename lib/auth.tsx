@@ -1,6 +1,6 @@
 "use client";
 
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import type { Database } from "@/types/supabase";
 import type { User, Session } from "@supabase/supabase-js";
@@ -8,7 +8,7 @@ import type { User, Session } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_PROJECT_URL || process.env.PROJECT_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_ANON_KEY || process.env.ANON_KEY!;
 
-const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+const supabase = createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);
 
 interface AuthState {
   user: User | null;

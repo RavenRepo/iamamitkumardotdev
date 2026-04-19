@@ -11,7 +11,7 @@ interface AuthResult {
   response: NextResponse;
 }
 
-export async function requireAuth(_req: NextRequest): Promise<AuthResult> {
+export async function requireAuth(req: NextRequest): Promise<AuthResult> {
   const cookieStore = await cookies();
 
   const supabase = createServerClient(env.PROJECT_URL, env.ANON_KEY, {
@@ -27,12 +27,16 @@ export async function requireAuth(_req: NextRequest): Promise<AuthResult> {
     },
   });
 
+  const authHeader = req.headers.get("authorization");
+  const token = authHeader?.startsWith("Bearer ") ? authHeader.substring(7) : undefined;
+
   const {
     data: { user },
     error,
-  } = await supabase.auth.getUser();
+  } = token ? await supabase.auth.getUser(token) : await supabase.auth.getUser();
 
   if (error || !user) {
+    console.error("Auth verification failed:", { error, hasUser: !!user, hasToken: !!token });
     return {
       authorized: false,
       session: null,

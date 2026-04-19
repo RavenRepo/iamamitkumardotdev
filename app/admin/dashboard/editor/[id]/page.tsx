@@ -41,7 +41,11 @@ export default function EditPost({
 
   useEffect(() => {
     if (id && session) {
-      fetch(`/api/admin/posts/${id}`)
+      fetch(`/api/admin/posts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      })
         .then((res) => res.json())
         .then((data) => {
           if (data && !data.error) {
@@ -136,7 +140,10 @@ export default function EditPost({
     try {
       const res = await fetch(`/api/admin/posts/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({
           title,
           slug,
@@ -182,6 +189,9 @@ export default function EditPost({
     try {
       const res = await fetch(`/api/admin/posts/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
       if (res.ok) {
         localStorage.removeItem(`editor-draft-${id}`);

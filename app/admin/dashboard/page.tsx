@@ -1,9 +1,30 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import Link from "next/link";
-import { Plus, Edit2, FileText, ChevronLeft, ChevronRight } from "lucide-react";
+import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
+import {
+  Plus,
+  Edit2,
+  FileText,
+  RefreshCw,
+  ArrowLeft,
+  Terminal,
+  Database,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+} from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface AdminPost {
   id: string;
@@ -22,6 +43,68 @@ interface PaginationInfo {
   hasPrev: boolean;
 }
 
+function PostCard({
+  post,
+  onEdit,
+}: {
+  post: AdminPost;
+  onEdit: (id: string) => void;
+}) {
+  return (
+    <div className="group bg-card border-border monolith-glass relative overflow-hidden border p-5 transition-all hover:border-primary/30 hover:shadow-lg">
+      <div className="border-border absolute top-0 right-0 h-3 w-3 border-t border-r transition-colors group-hover:border-primary/50" />
+      <div className="border-border absolute bottom-0 left-0 h-3 w-3 border-b border-l transition-colors group-hover:border-primary/50" />
+
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-display text-foreground group-hover:text-primary text-lg font-bold uppercase tracking-tight transition-colors truncate">
+            {post.title}
+          </h3>
+          <div className="mt-3 flex items-center gap-3">
+            <span className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
+              {new Date(post.createdAt).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+            <span
+              className={`rounded-full border px-2.5 py-0.5 font-mono text-[10px] tracking-widest uppercase transition-colors ${
+                post.status === "published"
+                  ? "bg-primary/10 text-primary border-primary/30"
+                  : "border-amber-500/30 text-amber-500"
+              }`}
+            >
+              {post.status}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={() => onEdit(post.id)}
+            className="border-border text-muted-foreground hover:text-primary hover:border-primary/50 flex h-9 w-9 items-center justify-center rounded-md border bg-background transition-all hover:bg-primary/5"
+            title="Edit post"
+          >
+            <Edit2 className="h-4 w-4" />
+          </button>
+          {post.status === "published" && (
+            <a
+              href={`/blog/${post.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-border text-muted-foreground hover:text-primary hover:border-primary/50 flex h-9 w-9 items-center justify-center rounded-md border bg-background transition-all hover:bg-primary/5"
+              title="View post"
+            >
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const { session } = useAuth();
   const [posts, setPosts] = useState<AdminPost[]>([]);
@@ -29,11 +112,24 @@ export default function AdminDashboard() {
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [syncingNotion, setSyncingNotion] = useState(false);
 
   useEffect(() => {
     if (!session) return;
 
-    fetch(`/api/admin/posts?page=${page}&limit=10`)
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: "10",
+    });
+    if (searchQuery) params.set("search", searchQuery);
+    if (statusFilter !== "all") params.set("status", statusFilter);
+
+    fetch(`/api/admin/posts?${params}`, {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.posts) {
@@ -45,13 +141,9 @@ export default function AdminDashboard() {
         setLoadingPosts(false);
       })
       .catch(() => setLoadingPosts(false));
-  }, [session, page]);
+  }, [session, page, searchQuery, statusFilter]);
 
-  const filteredPosts = searchQuery
-    ? posts.filter((post) =>
-        post.title.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    : posts;
+  const filteredPosts = posts;
 
   const handlePrevPage = () => {
     if (pagination?.hasPrev) {
@@ -67,119 +159,215 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleSyncNotion = async () => {
+    if (!session) return;
+    setSyncingNotion(true);
+    try {
+      const res = await fetch("/api/admin/notion/sync", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(`Successfully synced ${data.syncedCount} posts from Notion!`);
+        setLoadingPosts(true);
+        const params = new URLSearchParams({ page: String(page), limit: "10" });
+        fetch(`/api/admin/posts?${params}`, {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+          .then((r) => r.json())
+          .then((d) => {
+            if (d.posts) {
+              setPosts(Array.isArray(d.posts) ? d.posts : []);
+              setPagination(d.pagination);
+            }
+            setLoadingPosts(false);
+          });
+      } else {
+        alert(`Failed to sync: ${data.error || "Unknown error"}`);
+      }
+    } catch {
+      alert("An error occurred while syncing with Notion.");
+    } finally {
+      setSyncingNotion(false);
+    }
+  };
+
   if (!session) return null;
 
   return (
-    <div className="p-8">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-3xl font-bold tracking-tight">
-            Dashboard
-          </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Manage your content, draft new posts, and track published work.
-          </p>
-        </div>
-        <Button asChild>
-          <Link href="/admin/dashboard/editor/new">
-            <Plus className="mr-2 h-4 w-4" />
-            New Post
-          </Link>
-        </Button>
-      </div>
+    <div className="bg-background relative min-h-dvh">
+      <div className="bg-grid-blueprint text-foreground pointer-events-none fixed inset-0 opacity-10" />
 
-      <div className="bg-card border-border overflow-hidden rounded-lg border shadow-sm">
-        {loadingPosts ? (
-          <div className="text-muted-foreground flex items-center justify-center py-16 text-center">
-            <span className="border-primary mr-3 h-5 w-5 animate-spin rounded-full border-2 border-t-transparent" />
-            Loading contents...
+      <header className="bg-background/80 border-border fixed top-0 z-50 w-full border-b backdrop-blur-md">
+        <Container>
+          <div className="flex h-16 items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link
+                href="/admin"
+                className="text-muted-foreground hover:text-primary group flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                SYSTEM
+              </Link>
+              <span className="text-border">|</span>
+              <span className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
+                CONTROL_CENTER
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSyncNotion}
+                disabled={syncingNotion}
+                className="h-9 font-mono text-[10px] tracking-widest uppercase"
+              >
+                <RefreshCw
+                  className={`mr-2 h-3 w-3 ${syncingNotion ? "animate-spin" : ""}`}
+                />
+                {syncingNotion ? "SYNCING..." : "NOTION_SYNC"}
+              </Button>
+              <Button
+                asChild
+                size="sm"
+                className="h-9 font-mono text-[10px] tracking-widest uppercase"
+              >
+                <Link href="/admin/dashboard/editor/new">
+                  <Plus className="mr-2 h-3 w-3" />
+                  NEW_RECORD
+                </Link>
+              </Button>
+            </div>
           </div>
-        ) : posts.length === 0 ? (
-          <div className="bg-muted/10 py-20 text-center">
-            <FileText className="text-muted-foreground/30 mx-auto mb-4 h-12 w-12" />
-            <p className="text-foreground font-medium">No posts found</p>
-            <p className="text-muted-foreground mt-1 text-sm">
-              Get started by creating your very first post.
+        </Container>
+      </header>
+
+      <section className="relative z-10 pt-24 pb-24">
+        <Container>
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-2">
+              <Database className="text-primary h-5 w-5" />
+              <h1 className="font-display text-3xl font-bold tracking-tight uppercase">
+                CONTENT_DATABASE
+              </h1>
+            </div>
+            <p className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
+              Manage your content, draft new posts, and track published work.
             </p>
           </div>
-        ) : (
-          <>
-            <div className="border-border border-b p-4">
-              <input
-                type="text"
-                placeholder="Search posts..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-background border-border focus:border-primary/50 w-full max-w-md rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none"
-              />
-            </div>
-            <div className="divide-border divide-y">
-              {filteredPosts.map((post) => (
-                <div
-                  key={post.id}
-                  className="hover:bg-muted/30 group flex items-center justify-between p-5 transition-colors"
-                >
-                  <div className="flex-1">
-                    <h3 className="font-display text-foreground group-hover:text-primary text-lg font-medium transition-colors">
-                      {post.title}
-                    </h3>
-                    <div className="text-muted-foreground mt-2 flex items-center gap-4 text-sm">
-                      <span>
-                        {new Date(post.createdAt).toLocaleDateString(
-                          undefined,
-                          { year: "numeric", month: "short", day: "numeric" },
-                        )}
-                      </span>
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium tracking-wide uppercase ${post.status === "published" ? "bg-primary/10 text-primary" : "bg-amber-500/10 text-amber-600 dark:text-amber-400"}`}
-                      >
-                        {post.status}
-                      </span>
-                    </div>
-                  </div>
-                  <Button asChild variant="ghost" size="sm">
-                    <Link href={`/admin/dashboard/editor/${post.id}`}>
-                      <Edit2 className="mr-2 h-4 w-4" />
-                      Edit
-                    </Link>
-                  </Button>
-                </div>
-              ))}
-            </div>
-            {pagination && pagination.totalPages > 1 && (
-              <div className="border-border bg-muted/10 flex items-center justify-between border-t px-4 py-3">
-                <span className="text-muted-foreground text-sm">
-                  Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
-                  {Math.min(
-                    pagination.page * pagination.limit,
-                    pagination.total,
-                  )}{" "}
-                  of {pagination.total} posts
-                </span>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handlePrevPage}
-                    disabled={!pagination.hasPrev}
-                    className="border-border text-muted-foreground hover:bg-muted rounded-md border p-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-                  <span className="text-muted-foreground px-2 text-sm">
-                    Page {pagination.page} of {pagination.totalPages}
-                  </span>
-                  <button
-                    onClick={handleNextPage}
-                    disabled={!pagination.hasNext}
-                    className="border-border text-muted-foreground hover:bg-muted rounded-md border p-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
+
+          <div className="bg-card border-border monolith-glass mb-6 border p-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="SEARCH_RECORDS..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setPage(1);
+                  }}
+                  className="bg-background border-border text-foreground focus:border-primary/50 placeholder:text-muted-foreground/50 w-full border pl-10 pr-4 py-2 font-mono text-[10px] tracking-widest uppercase transition-colors focus:outline-none"
+                />
               </div>
-            )}
-          </>
-        )}
-      </div>
+              <Select
+                value={statusFilter}
+                onValueChange={(value) => {
+                  setStatusFilter(value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="border-border bg-background h-9 w-[140px] font-mono text-[10px] tracking-widest uppercase">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border font-mono text-[10px]">
+                  <SelectItem value="all" className="font-mono uppercase">
+                    ALL_STATUS
+                  </SelectItem>
+                  <SelectItem value="draft" className="font-mono uppercase">
+                    DRAFT
+                  </SelectItem>
+                  <SelectItem value="published" className="font-mono uppercase">
+                    PUBLISHED
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {pagination && (
+                <div className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
+                  {pagination.total} TOTAL_RECORDS
+                </div>
+              )}
+            </div>
+          </div>
+
+          {loadingPosts ? (
+            <div className="bg-card border-border monolith-glass flex items-center justify-center border py-16">
+              <span className="border-primary mr-3 h-5 w-5 animate-spin rounded-full border-2 border-t-transparent" />
+              <span className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
+                LOADING_RECORDS...
+              </span>
+            </div>
+          ) : filteredPosts.length === 0 ? (
+            <div className="bg-card border-border monolith-glass text-center border py-20">
+              <FileText className="text-muted-foreground/30 mx-auto mb-4 h-12 w-12" />
+              <p className="text-foreground font-display text-lg font-bold uppercase tracking-tight">
+                NO_RECORDS_FOUND
+              </p>
+              <p className="text-muted-foreground mt-2 font-mono text-[10px] tracking-widest uppercase">
+                Get started by creating your very first record.
+              </p>
+              <Button asChild className="mt-6 font-mono text-[10px] tracking-widest uppercase">
+                <Link href="/admin/dashboard/editor/new">
+                  <Plus className="mr-2 h-3 w-3" />
+                  CREATE_RECORD
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 gap-4">
+                {filteredPosts.map((post) => (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    onEdit={(id) =>
+                      (window.location.href = `/admin/dashboard/editor/${id}`)
+                    }
+                  />
+                ))}
+              </div>
+
+              {pagination && pagination.totalPages > 1 && (
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
+                    PAGE {pagination.page}/{pagination.totalPages}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handlePrevPage}
+                      disabled={!pagination.hasPrev}
+                      className="border-border text-muted-foreground hover:bg-muted hover:text-foreground flex h-9 w-9 items-center justify-center rounded-md border transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={handleNextPage}
+                      disabled={!pagination.hasNext}
+                      className="border-border text-muted-foreground hover:bg-muted hover:text-foreground flex h-9 w-9 items-center justify-center rounded-md border transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </Container>
+      </section>
     </div>
   );
 }
