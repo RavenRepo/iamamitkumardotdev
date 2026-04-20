@@ -1,14 +1,18 @@
 "use client";
 
 import React from "react";
-import { Subheading } from "./subheading";
+import { Subheading } from "@/components/subheading";
 import {
   IconBrandInstagram,
   IconBrandLinkedin,
   IconBrandTiktok,
   IconListCheck,
+  IconBolt,
+  IconBrain,
+  IconChecklist,
 } from "@tabler/icons-react";
-import { Box } from "./box";
+import { Box } from "@/components/box";
+import { LinkPreview } from "@/components/link-preview";
 import { motion } from "motion/react";
 import { SPRING_CONFIG } from "@/lib/motion-config";
 
@@ -33,7 +37,7 @@ const platforms = [
   },
 ];
 
-const points = [
+const stats = [
   {
     stat: "87%",
     label: "of saves are never opened again.",
@@ -51,12 +55,38 @@ const points = [
   },
 ];
 
+const features = [
+  {
+    icon: IconBolt,
+    title: "Auto-import saves",
+    description:
+      "Connect your Instagram, TikTok, and LinkedIn. VidoTask pulls your saved posts automatically — no manual entry, no copy-paste.",
+    boxClassName:
+      "bg-linear-to-b from-amber-400 to-orange-500 ring-offset-orange-500",
+  },
+  {
+    icon: IconBrain,
+    title: "AI-powered task extraction",
+    description:
+      "Each save gets analyzed and broken into concrete next steps. A recipe becomes a grocery list. A tutorial becomes a learning schedule.",
+    boxClassName:
+      "bg-linear-to-b from-violet-400 to-violet-600 ring-offset-violet-500",
+  },
+  {
+    icon: IconChecklist,
+    title: "Actionable plans, not bookmarks",
+    description:
+      "Your saves become structured tasks with deadlines, priorities, and context. Finally, that saved post becomes something you actually do.",
+    boxClassName:
+      "bg-linear-to-b from-emerald-400 to-emerald-600 ring-offset-emerald-500",
+  },
+];
+
 export const VidoTask = () => {
   return (
     <section>
       <Subheading>Building now</Subheading>
 
-      {/* Identity row — matches work.tsx pattern */}
       <div className="mt-4 flex flex-col gap-1 md:flex-row md:items-center md:gap-2">
         <div className="flex shrink-0 items-center gap-1.5">
           {platforms.map((p, i) => {
@@ -95,14 +125,13 @@ export const VidoTask = () => {
         </p>
       </div>
 
-      {/* Body — plain prose, exactly like header.tsx */}
       <div className="mt-6 flex flex-col gap-4">
         <p className="text-foreground/70 text-base">
           You have hundreds of saved posts on Instagram, TikTok, LinkedIn. Be
           honest — when did you last open any of them?
         </p>
 
-        {points.map((point) => (
+        {stats.map((point) => (
           <p key={point.stat} className="text-foreground/70 text-base">
             <span className="text-foreground font-medium">
               {point.stat} — {point.label}
@@ -110,6 +139,47 @@ export const VidoTask = () => {
             {point.body}
           </p>
         ))}
+      </div>
+
+      <div className="mt-10 flex flex-col gap-4">
+        <p className="text-foreground text-base font-medium">
+          How VidoTask fixes it
+        </p>
+
+        {features.map((feature, i) => {
+          const Icon = feature.icon;
+          return (
+            <motion.div
+              key={feature.title}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...SPRING_CONFIG, delay: 0.3 + i * 0.08 }}
+              className="flex flex-col"
+            >
+              <div className="flex flex-row items-center gap-2">
+                <Box className={feature.boxClassName}>
+                  <Icon className="size-4 text-white drop-shadow-xl drop-shadow-black/40" />
+                </Box>
+                <p className="text-foreground font-medium text-balance">
+                  {feature.title}
+                </p>
+              </div>
+              <p className="text-foreground/70 mt-2 text-sm">
+                {feature.description}
+              </p>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      <div className="mt-8">
+        <p className="text-foreground/70 text-base">
+          Try it out at{" "}
+          <LinkPreview url="https://vidotask.com">
+            vidotask.com
+          </LinkPreview>{" "}
+          — currently in active development.
+        </p>
       </div>
     </section>
   );

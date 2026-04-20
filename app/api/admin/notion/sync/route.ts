@@ -81,6 +81,7 @@ export async function POST(req: NextRequest) {
           tags: tags.length > 0 ? serializeTags(tags) : null,
           metaTitle,
           metaDescription,
+          authorId: "notion-sync",
           publishedAt,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),

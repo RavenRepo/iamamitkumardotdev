@@ -1,8 +1,12 @@
 "use client";
+
 import { useState, useEffect, use, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { ArrowLeft, Save, Trash2, Settings2 } from "lucide-react";
 import Link from "next/link";
+import Container from "@/components/container";
+import { Subheading } from "@/components/subheading";
+import { DottedSeparator } from "@/components/separator";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -33,18 +37,13 @@ export default function EditPost({
   const [isDeleting, setIsDeleting] = useState(false);
   const [showMeta, setShowMeta] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const [viewMode, setViewMode] = useState<"write" | "preview" | "split">(
-    "split",
-  );
+  const [viewMode, setViewMode] = useState<"write" | "preview" | "split">("split");
   const initialValuesRef = useRef<string>("");
-  const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (id && session) {
       fetch(`/api/admin/posts/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+        headers: { Authorization: `Bearer ${session.access_token}` },
       })
         .then((res) => res.json())
         .then((data) => {
@@ -65,12 +64,7 @@ export default function EditPost({
                 setTags(data.tags);
               }
             }
-            initialValuesRef.current = JSON.stringify({
-              title: data.title,
-              slug: data.slug,
-              content: data.content,
-              excerpt: data.excerpt,
-            });
+            initialValuesRef.current = JSON.stringify({ title: data.title, slug: data.slug, content: data.content, excerpt: data.excerpt });
           }
           setInitialFetchDone(true);
         })
@@ -94,44 +88,15 @@ export default function EditPost({
 
   useEffect(() => {
     if (!isDirty || !initialFetchDone) return;
-    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
-    autosaveTimerRef.current = setTimeout(() => {
+    const timer = setTimeout(() => {
       try {
-        localStorage.setItem(
-          `editor-draft-${id}`,
-          JSON.stringify({
-            title,
-            slug,
-            excerpt,
-            content,
-            status,
-            tags,
-            coverImage,
-            metaTitle,
-            metaDescription,
-          }),
-        );
+        localStorage.setItem(`editor-draft-${id}`, JSON.stringify({ title, slug, excerpt, content, status, tags, coverImage, metaTitle, metaDescription }));
       } catch (e) {
         console.error("Autosave failed:", e);
       }
     }, 3000);
-    return () => {
-      if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
-    };
-  }, [
-    title,
-    slug,
-    excerpt,
-    content,
-    status,
-    tags,
-    coverImage,
-    metaTitle,
-    metaDescription,
-    isDirty,
-    initialFetchDone,
-    id,
-  ]);
+    return () => clearTimeout(timer);
+  }, [title, slug, excerpt, content, status, tags, coverImage, metaTitle, metaDescription, isDirty, initialFetchDone, id]);
 
   if (!session) return null;
 
@@ -140,22 +105,10 @@ export default function EditPost({
     try {
       const res = await fetch(`/api/admin/posts/${id}`, {
         method: "PUT",
-        headers: { 
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({
-          title,
-          slug,
-          excerpt,
-          content,
-          status,
-          tags: tags
-            ? tags
-                .split(",")
-                .map((t) => t.trim())
-                .filter(Boolean)
-            : [],
+          title, slug, excerpt, content, status,
+          tags: tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
           coverImage: coverImage || undefined,
           metaTitle: metaTitle || undefined,
           metaDescription: metaDescription || undefined,
@@ -164,46 +117,36 @@ export default function EditPost({
       if (res.ok) {
         localStorage.removeItem(`editor-draft-${id}`);
         setIsDirty(false);
-        initialValuesRef.current = JSON.stringify({
-          title,
-          slug,
-          content,
-          excerpt,
-        });
-        addToast("Post updated successfully", "success");
+        initialValuesRef.current = JSON.stringify({ title, slug, content, excerpt });
+        addToast("Post updated", "success");
       } else {
         const data = await res.json();
-        addToast(data.error || "Failed to update post", "error");
+        addToast(data.error || "Failed to update", "error");
       }
     } catch {
-      addToast("Network error while saving", "error");
+      addToast("Network error", "error");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to permanently delete this post?"))
-      return;
+    if (!confirm("Delete this post permanently?")) return;
     setIsDeleting(true);
     try {
       const res = await fetch(`/api/admin/posts/${id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
+        headers: { Authorization: `Bearer ${session.access_token}` },
       });
       if (res.ok) {
         localStorage.removeItem(`editor-draft-${id}`);
         addToast("Post deleted", "success");
-        setTimeout(() => {
-          window.location.href = "/admin/dashboard";
-        }, 500);
+        setTimeout(() => { window.location.href = "/admin/dashboard"; }, 500);
       } else {
-        addToast("Failed to delete post", "error");
+        addToast("Failed to delete", "error");
       }
     } catch {
-      addToast("Network error while deleting", "error");
+      addToast("Network error", "error");
     } finally {
       setIsDeleting(false);
     }
@@ -211,190 +154,156 @@ export default function EditPost({
 
   if (!initialFetchDone)
     return (
-      <div className="text-muted-foreground flex h-full items-center justify-center">
-        <span className="border-primary mr-3 h-5 w-5 animate-spin rounded-full border-2 border-t-transparent" />
-        Loading post data...
-      </div>
+      <Container className="pt-4">
+        <p className="text-foreground/40 font-mono text-xs tracking-widest uppercase">Loading...</p>
+      </Container>
     );
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
+    <Container className="pt-4 pb-24">
       <ToastContainer toasts={toasts} dismiss={dismiss} />
-      <header className="border-border bg-background/95 sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b px-6 backdrop-blur-md">
-        <Link
-          href="/admin/dashboard"
-          className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm font-medium transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to Dashboard
-        </Link>
-        <div className="flex items-center gap-3">
-          {isDirty && (
-            <span className="font-mono text-[10px] tracking-widest text-amber-500 uppercase">
-              UNSAVED_CHANGES
-            </span>
-          )}
-          <div className="border-border flex items-center overflow-hidden rounded-md border">
-            <button
-              onClick={() => setViewMode("write")}
-              className={`px-3 py-1.5 text-xs font-medium transition-colors ${viewMode === "write" ? "bg-primary text-background" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}
-            >
-              Write
-            </button>
-            <button
-              onClick={() => setViewMode("split")}
-              className={`px-3 py-1.5 text-xs font-medium transition-colors ${viewMode === "split" ? "bg-primary text-background" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}
-            >
-              Split
-            </button>
-            <button
-              onClick={() => setViewMode("preview")}
-              className={`px-3 py-1.5 text-xs font-medium transition-colors ${viewMode === "preview" ? "bg-primary text-background" : "text-muted-foreground hover:text-foreground hover:bg-muted"}`}
-            >
-              Preview
-            </button>
+
+      <div className="flex items-start justify-between">
+        <div>
+          <Subheading>Edit post</Subheading>
+          <div className="mt-4 flex flex-col gap-1 md:flex-row md:items-center md:gap-2">
+            <p className="text-foreground font-medium">{title || "Untitled"}</p>
+            {isDirty && (
+              <>
+                <div className="hidden size-1 rounded-full bg-amber-400 md:block" />
+                <span className="text-amber-500 font-mono text-[10px] tracking-widest uppercase">Unsaved</span>
+              </>
+            )}
           </div>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as "draft" | "published")}
-            className="bg-background border-border focus:border-primary rounded-md border px-3 py-1.5 text-sm focus:outline-none"
-          >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-          </select>
+        </div>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setShowMeta(!showMeta)}
-            className={`inline-flex items-center rounded-md border px-3 py-1.5 text-sm transition-colors ${showMeta ? "bg-primary text-background border-primary" : "bg-background text-muted-foreground border-border hover:border-primary hover:text-foreground"}`}
+            className={`font-mono text-[10px] tracking-widest uppercase transition-colors ${
+              showMeta ? "text-foreground" : "text-foreground/40 hover:text-foreground"
+            }`}
           >
-            <Settings2 className="mr-1.5 h-4 w-4" /> SEO
+            <Settings2 className="mr-1 inline h-3 w-3" />
+            SEO
           </button>
           <button
             onClick={handleDelete}
             disabled={isDeleting}
-            className="inline-flex items-center rounded-md border border-transparent bg-transparent px-3 py-1.5 text-sm font-medium text-red-500 transition-colors hover:border-red-500/30 hover:bg-red-500/10 disabled:opacity-50"
+            className="font-mono text-[10px] tracking-widest uppercase text-red-500/70 hover:text-red-500 transition-colors disabled:opacity-50"
           >
-            <Trash2 className="mr-1.5 h-4 w-4" />
-            {isDeleting ? "Deleting..." : "Delete"}
+            <Trash2 className="mr-1 inline h-3 w-3" />
+            Delete
           </button>
           <button
             onClick={handleSave}
             disabled={loading || !title || !slug || !content}
-            className="bg-primary text-background border-primary hover:bg-primary/90 inline-flex items-center rounded-md border px-4 py-1.5 text-sm font-medium shadow-sm transition-colors disabled:opacity-50"
+            className="bg-foreground text-background cursor-pointer px-3 py-1.5 text-sm font-medium transition-opacity hover:opacity-90 disabled:cursor-default disabled:opacity-50"
           >
-            <Save className="mr-1.5 h-4 w-4" />
-            {status === "published" ? "Update Post" : "Save Draft"}
+            <Save className="mr-1.5 inline h-3 w-3" />
+            {loading ? "Saving..." : status === "published" ? "Update" : "Save draft"}
           </button>
         </div>
-      </header>
-
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="mx-auto h-full w-full space-y-6">
-          {showMeta && (
-            <div className="bg-card border-border grid grid-cols-1 gap-4 rounded-lg border p-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-muted-foreground block text-xs font-medium tracking-wider uppercase">
-                  Meta Title
-                </label>
-                <input
-                  type="text"
-                  value={metaTitle}
-                  onChange={(e) => setMetaTitle(e.target.value)}
-                  maxLength={70}
-                  className="bg-background border-border focus:border-primary/50 text-foreground placeholder:text-muted-foreground/50 w-full rounded-md border p-2.5 text-sm transition-colors focus:outline-none"
-                  placeholder="SEO title..."
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-muted-foreground block text-xs font-medium tracking-wider uppercase">
-                  Cover Image URL
-                </label>
-                <input
-                  type="url"
-                  value={coverImage}
-                  onChange={(e) => setCoverImage(e.target.value)}
-                  className="bg-background border-border focus:border-primary/50 text-foreground placeholder:text-muted-foreground/50 w-full rounded-md border p-2.5 text-sm transition-colors focus:outline-none"
-                  placeholder="https://..."
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-muted-foreground block text-xs font-medium tracking-wider uppercase">
-                  Meta Description
-                </label>
-                <textarea
-                  value={metaDescription}
-                  onChange={(e) => setMetaDescription(e.target.value)}
-                  maxLength={160}
-                  className="bg-background border-border text-foreground focus:border-primary/50 placeholder:text-muted-foreground/50 h-16 w-full resize-none rounded-md border p-2.5 text-sm transition-colors focus:outline-none"
-                  placeholder="SEO description..."
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-muted-foreground block text-xs font-medium tracking-wider uppercase">
-                  Tags
-                </label>
-                <input
-                  type="text"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                  className="bg-background border-border focus:border-primary/50 text-foreground placeholder:text-muted-foreground/50 w-full rounded-md border p-2.5 text-sm transition-colors focus:outline-none"
-                  placeholder="ai, agent, startup (comma separated)"
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="grid h-[75vh] grid-cols-1 gap-6 lg:grid-cols-2">
-            <div className="flex h-full flex-col gap-4">
-              <input
-                type="text"
-                placeholder="Post Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="font-display text-foreground placeholder:text-muted-foreground/30 w-full border-none bg-transparent text-4xl font-bold focus:outline-none"
-              />
-              <input
-                type="text"
-                placeholder="slug-url-identifier"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                className="text-muted-foreground placeholder:text-muted-foreground/30 w-full border-none bg-transparent font-mono text-sm focus:outline-none"
-              />
-              <textarea
-                placeholder="Write a brief excerpt (optional)..."
-                value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value)}
-                className="bg-card border-border focus:border-primary/50 text-foreground placeholder:text-muted-foreground/50 h-24 w-full resize-none rounded-md border p-4 text-sm transition-colors focus:outline-none"
-              />
-              {(viewMode === "write" || viewMode === "split") && (
-                <RichTextEditor
-                  content={content}
-                  onChange={setContent}
-                  placeholder="Write your content here... Use the toolbar for formatting, or drag and drop images."
-                />
-              )}
-            </div>
-
-            {(viewMode === "preview" || viewMode === "split") && (
-              <div className="bg-card border-border relative hidden h-full flex-col overflow-hidden rounded-md border lg:flex">
-                <div className="bg-muted/10 border-border text-muted-foreground flex justify-between border-b p-3 text-xs font-medium tracking-wider uppercase">
-                  Live Preview
-                  <span className="bg-primary animate-pulse-slow h-1.5 w-1.5 rounded-full"></span>
-                </div>
-                <div className="custom-scrollbar flex-1 overflow-y-auto p-8">
-                  <div className="prose dark:prose-invert prose-headings:font-display prose-headings:font-bold prose-a:text-primary prose-img:rounded-lg max-w-none">
-                    <h1>{title || "Untitled Post"}</h1>
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      rehypePlugins={[rehypeHighlight]}
-                    >
-                      {content}
-                    </ReactMarkdown>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
-    </div>
+
+      <DottedSeparator className="my-4" />
+
+      {showMeta && (
+        <div className="mb-6 flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-foreground/40 font-mono text-xs uppercase tracking-wide">Meta title (max 70)</label>
+            <input type="text" value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} maxLength={70}
+              className="bg-card/30 border-border text-foreground placeholder:text-foreground/30 w-full border px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              placeholder="Custom SEO title..." />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-foreground/40 font-mono text-xs uppercase tracking-wide">Cover image URL</label>
+            <input type="url" value={coverImage} onChange={(e) => setCoverImage(e.target.value)}
+              className="bg-card/30 border-border text-foreground placeholder:text-foreground/30 w-full border px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              placeholder="https://..." />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-foreground/40 font-mono text-xs uppercase tracking-wide">Meta description (max 160)</label>
+            <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} maxLength={160}
+              className="bg-card/30 border-border text-foreground placeholder:text-foreground/30 h-16 w-full resize-none border px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              placeholder="Custom SEO description..." />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-foreground/40 font-mono text-xs uppercase tracking-wide">Tags (comma separated)</label>
+            <input type="text" value={tags} onChange={(e) => setTags(e.target.value)}
+              className="bg-card/30 border-border text-foreground placeholder:text-foreground/30 w-full border px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              placeholder="ai-agents, saas, next.js" />
+          </div>
+          <DottedSeparator className="my-2" />
+        </div>
+      )}
+
+      <div className="grid h-[calc(100vh-14rem)] grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="flex h-full flex-col gap-4 overflow-y-auto">
+          <div className="flex items-center gap-3">
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as "draft" | "published")}
+              className="bg-card/30 border-border text-foreground text-xs focus:outline-none border px-2 py-1"
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+            <div className="border-border flex items-center overflow-hidden border">
+              {(["write", "split", "preview"] as const).map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  className={`px-3 py-1 text-xs transition-colors ${
+                    viewMode === mode ? "bg-foreground text-background" : "text-foreground/40 hover:text-foreground"
+                  }`}
+                >
+                  {mode.charAt(0).toUpperCase() + mode.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <input
+            type="text"
+            placeholder="Post title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="text-foreground placeholder:text-foreground/30 w-full border-none bg-transparent text-2xl font-bold focus:outline-none"
+          />
+          <input
+            type="text"
+            placeholder="slug-url-identifier"
+            value={slug}
+            onChange={(e) => setSlug(e.target.value)}
+            className="text-foreground/40 placeholder:text-foreground/20 w-full border-none bg-transparent font-mono text-[10px] tracking-widest uppercase focus:outline-none"
+          />
+          <textarea
+            placeholder="Brief excerpt (optional)..."
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            className="bg-card/30 border-border text-foreground placeholder:text-foreground/30 h-20 w-full resize-none border p-3 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+          {(viewMode === "write" || viewMode === "split") && (
+            <RichTextEditor content={content} onChange={setContent} placeholder="Write your content here..." />
+          )}
+        </div>
+
+        {(viewMode === "preview" || viewMode === "split") && (
+          <div className="border-border relative hidden h-full flex-col overflow-hidden border lg:flex">
+            <div className="border-border flex items-center justify-between border-b p-3">
+              <span className="text-foreground/40 font-mono text-[10px] tracking-widest uppercase">Preview</span>
+              <span className="bg-primary h-1.5 w-1.5 rounded-full" />
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="prose dark:prose-invert prose-headings:font-display prose-headings:font-bold prose-a:text-primary prose-p:text-muted-foreground prose-code:font-mono prose-img:rounded-lg max-w-none">
+                <h2>{title || "Untitled"}</h2>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
+                  {content}
+                </ReactMarkdown>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </Container>
   );
 }

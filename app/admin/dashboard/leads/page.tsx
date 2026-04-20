@@ -2,19 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { Container } from "@/components/layout/container";
-import { Button } from "@/components/ui/button";
+import Container from "@/components/container";
+import { Subheading } from "@/components/subheading";
+import { DottedSeparator } from "@/components/separator";
+import { Box } from "@/components/box";
 import {
   RefreshCw,
   Mail,
   MessageSquare,
   Users,
   Globe,
-  ArrowLeft,
-  Database,
   Bell,
+  Database,
 } from "lucide-react";
-import Link from "next/link";
 
 interface ContactInquiryRecord {
   id: number;
@@ -54,43 +54,9 @@ function formatDateTime(value: string) {
   });
 }
 
-function truncate(value: string, length = 140) {
+function truncate(value: string, length = 100) {
   if (value.length <= length) return value;
   return `${value.slice(0, length - 1)}…`;
-}
-
-function StatCard({
-  label,
-  value,
-  icon: Icon,
-  accent = false,
-}: {
-  label: string;
-  value: number;
-  icon: React.ElementType;
-  accent?: boolean;
-}) {
-  return (
-    <div className="bg-card border-border monolith-glass relative border p-5">
-      <div className="border-border absolute top-0 right-0 h-3 w-3 border-t border-r" />
-      <div className="border-border absolute bottom-0 left-0 h-3 w-3 border-b border-l" />
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
-            {label}
-          </p>
-          <p className="font-display mt-1 text-3xl font-bold tracking-tight">
-            {value}
-          </p>
-        </div>
-        <div
-          className={`rounded-lg p-2.5 ${accent ? "bg-primary/10" : "bg-muted/50"}`}
-        >
-          <Icon className={`h-5 w-5 ${accent ? "text-primary" : "text-muted-foreground"}`} />
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export default function AdminLeadsPage() {
@@ -139,209 +105,156 @@ export default function AdminLeadsPage() {
   if (!session) return null;
 
   return (
-    <div className="bg-background relative min-h-dvh">
-      <div className="bg-grid-blueprint text-foreground pointer-events-none fixed inset-0 opacity-10" />
-
-      <header className="bg-background/80 border-border fixed top-0 z-50 w-full border-b backdrop-blur-md">
-        <Container>
-          <div className="flex h-16 items-center justify-between">
-            <Link
-              href="/admin/dashboard"
-              className="text-muted-foreground hover:text-primary group flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              ABORT_MISSION
-            </Link>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setLoading(true);
-                setRefreshTick((n) => n + 1);
-              }}
-              disabled={loading}
-              className="h-9 font-mono text-[10px] tracking-widest uppercase"
-            >
-              <RefreshCw className={`mr-2 h-3 w-3 ${loading ? "animate-spin" : ""}`} />
-              REFRESH_FEED
-            </Button>
-          </div>
-        </Container>
-      </header>
-
-      <section className="relative z-10 pt-24 pb-24">
-        <Container>
-          <div className="mb-8">
-            <h1 className="font-display text-3xl font-bold tracking-tight uppercase">
-              LEAD_INTELLIGENCE
-            </h1>
-            <p className="text-muted-foreground mt-1 font-mono text-[10px] tracking-widest uppercase">
-              Contact inquiries and newsletter subscribers captured from the live site.
+    <Container className="pt-4 pb-24">
+      <div className="flex items-start justify-between">
+        <div>
+          <Subheading>Lead intelligence</Subheading>
+          <div className="mt-4 flex flex-col gap-1 md:flex-row md:items-center md:gap-2">
+            <p className="text-foreground font-medium">
+              {contactInquiries.length + newsletterSubscribers.length} leads
+            </p>
+            <div className="hidden size-1 rounded-full bg-neutral-200 md:block" />
+            <p className="text-foreground/70">
+              Contact inquiries and newsletter subscribers.
             </p>
           </div>
+        </div>
+        <button
+          onClick={() => {
+            setLoading(true);
+            setRefreshTick((n) => n + 1);
+          }}
+          disabled={loading}
+          className="text-foreground/40 hover:text-foreground font-mono text-[10px] tracking-widest uppercase transition-colors disabled:opacity-50"
+        >
+          <RefreshCw className={`mr-1 inline h-3 w-3 ${loading ? "animate-spin" : ""}`} />
+          Refresh
+        </button>
+      </div>
 
-          {errorMsg && (
-            <div className="bg-destructive/10 border-destructive mb-6 border p-4 font-mono text-[10px] tracking-widest uppercase">
-              [ERROR] {errorMsg}
-            </div>
-          )}
+      {errorMsg && (
+        <div className="mt-4 bg-destructive/10 border-destructive text-destructive border p-3 font-mono text-xs tracking-wider">
+          {errorMsg}
+        </div>
+      )}
 
-          <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <StatCard
-              label="CONTACT_INQUIRIES"
-              value={contactInquiries.length}
-              icon={MessageSquare}
-            />
-            <StatCard
-              label="NEWSLETTER_SUBSCRIBERS"
-              value={newsletterSubscribers.length}
-              icon={Bell}
-            />
-            <StatCard
-              label="TOTAL_LEADS"
-              value={contactInquiries.length + newsletterSubscribers.length}
-              icon={Database}
-              accent
-            />
+      <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="flex flex-col items-start gap-1.5 md:flex-row md:items-center md:gap-2">
+          <Box className="bg-linear-to-b from-blue-400 to-blue-600 ring-offset-blue-500">
+            <MessageSquare className="size-4 text-white drop-shadow-xl drop-shadow-black/40" />
+          </Box>
+          <p className="text-foreground font-medium">{contactInquiries.length}</p>
+          <div className="hidden size-1 rounded-full bg-neutral-200 md:block" />
+          <p className="text-foreground/70 text-sm">Contact inquiries</p>
+        </div>
+        <div className="flex flex-col items-start gap-1.5 md:flex-row md:items-center md:gap-2">
+          <Box className="bg-linear-to-b from-violet-400 to-violet-600 ring-offset-violet-500">
+            <Bell className="size-4 text-white drop-shadow-xl drop-shadow-black/40" />
+          </Box>
+          <p className="text-foreground font-medium">{newsletterSubscribers.length}</p>
+          <div className="hidden size-1 rounded-full bg-neutral-200 md:block" />
+          <p className="text-foreground/70 text-sm">Newsletter subscribers</p>
+        </div>
+        <div className="flex flex-col items-start gap-1.5 md:flex-row md:items-center md:gap-2">
+          <Box className="bg-linear-to-b from-emerald-400 to-emerald-600 ring-offset-emerald-500">
+            <Database className="size-4 text-white drop-shadow-xl drop-shadow-black/40" />
+          </Box>
+          <p className="text-foreground font-medium">{contactInquiries.length + newsletterSubscribers.length}</p>
+          <div className="hidden size-1 rounded-full bg-neutral-200 md:block" />
+          <p className="text-foreground/70 text-sm">Total leads</p>
+        </div>
+      </div>
+
+      <DottedSeparator className="my-6" />
+
+      <section>
+        <p className="text-foreground font-medium">Contact inquiries</p>
+
+        {loading ? (
+          <p className="text-foreground/40 mt-4 font-mono text-xs tracking-widest uppercase">
+            Loading...
+          </p>
+        ) : contactInquiries.length === 0 ? (
+          <p className="text-foreground/40 mt-4 font-mono text-xs tracking-widest uppercase">
+            No records
+          </p>
+        ) : (
+          <div className="mt-4 flex flex-col gap-4">
+            {contactInquiries.map((lead) => (
+              <div key={lead.id} className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1.5 md:flex-row md:items-center md:gap-2">
+                  <a
+                    className="text-foreground font-medium hover:text-primary transition-colors"
+                    href={`mailto:${lead.email}`}
+                  >
+                    <Mail className="mr-1 inline h-3 w-3" />
+                    {lead.name}
+                  </a>
+                  <div className="hidden size-1 rounded-full bg-neutral-200 md:block" />
+                  <span className="text-foreground/40 font-mono text-[10px] tracking-widest uppercase">
+                    {formatDateTime(lead.createdAt)}
+                  </span>
+                  {lead.source && (
+                    <a
+                      href={lead.source}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-foreground/40 hover:text-foreground transition-colors"
+                    >
+                      <Globe className="h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+                {lead.subject && (
+                  <p className="text-foreground/70 text-sm">{lead.subject}</p>
+                )}
+                <p className="text-foreground/50 text-sm">{truncate(lead.message)}</p>
+              </div>
+            ))}
           </div>
-
-          <section className="bg-card border-border monolith-glass mb-6 overflow-hidden border">
-            <div className="border-border border-b px-5 py-4">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="text-primary h-4 w-4" />
-                <h2 className="text-muted-foreground font-mono text-xs tracking-widest uppercase">
-                  CONTACT_INQUIRIES
-                </h2>
-                <span className="ml-auto bg-primary/10 text-primary border-primary/30 font-mono text-[10px] border px-2 py-0.5 tracking-widest uppercase">
-                  {contactInquiries.length} RECORDS
-                </span>
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/30 text-muted-foreground">
-                  <tr>
-                    <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase">When</th>
-                    <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase">Name</th>
-                    <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase">Email</th>
-                    <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase">Subject</th>
-                    <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase">Message</th>
-                    <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase">Source</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {contactInquiries.map((lead) => (
-                    <tr key={lead.id} className="border-t border-border align-top hover:bg-muted/20 transition-colors">
-                      <td className="px-4 py-3 whitespace-nowrap text-muted-foreground font-mono text-[10px]">
-                        {formatDateTime(lead.createdAt)}
-                      </td>
-                      <td className="px-4 py-3">{lead.name}</td>
-                      <td className="px-4 py-3">
-                        <a className="text-primary hover:underline inline-flex items-center gap-1.5" href={`mailto:${lead.email}`}>
-                          <Mail className="h-3 w-3" />
-                          <span className="font-mono text-[10px]">{lead.email}</span>
-                        </a>
-                      </td>
-                      <td className="px-4 py-3">{lead.subject}</td>
-                      <td className="px-4 py-3 max-w-xs text-muted-foreground text-xs">{truncate(lead.message, 120)}</td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {lead.source ? (
-                          <a href={lead.source} target="_blank" rel="noopener noreferrer" className="hover:text-primary inline-flex items-center gap-1.5 transition-colors">
-                            <Globe className="h-3 w-3" />
-                            <span className="font-mono text-[10px]">SOURCE</span>
-                          </a>
-                        ) : (
-                          <span className="text-muted-foreground/50">—</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                  {!loading && contactInquiries.length === 0 && (
-                    <tr>
-                      <td colSpan={6} className="px-4 py-12 text-center">
-                        <div className="text-muted-foreground/50 font-mono text-[10px] tracking-widest uppercase">
-                          NO_RECORDS_FOUND
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <section className="bg-card border-border monolith-glass overflow-hidden border">
-            <div className="border-border border-b px-5 py-4">
-              <div className="flex items-center gap-2">
-                <Users className="text-primary h-4 w-4" />
-                <h2 className="text-muted-foreground font-mono text-xs tracking-widest uppercase">
-                  NEWSLETTER_SUBSCRIBERS
-                </h2>
-                <span className="ml-auto bg-primary/10 text-primary border-primary/30 font-mono text-[10px] border px-2 py-0.5 tracking-widest uppercase">
-                  {newsletterSubscribers.length} RECORDS
-                </span>
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/30 text-muted-foreground">
-                  <tr>
-                    <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase">Updated</th>
-                    <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase">Email</th>
-                    <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase">Status</th>
-                    <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase">Source</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {newsletterSubscribers.map((subscriber) => (
-                    <tr key={subscriber.id} className="border-t border-border hover:bg-muted/20 transition-colors">
-                      <td className="px-4 py-3 whitespace-nowrap text-muted-foreground font-mono text-[10px]">
-                        {formatDateTime(subscriber.updatedAt)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <a className="text-primary hover:underline inline-flex items-center gap-1.5" href={`mailto:${subscriber.email}`}>
-                          <Mail className="h-3 w-3" />
-                          <span className="font-mono text-[10px]">{subscriber.email}</span>
-                        </a>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`px-2 py-0.5 rounded-full font-mono text-[10px] tracking-widest uppercase ${
-                            subscriber.isActive
-                              ? "bg-primary/10 text-primary"
-                              : "bg-muted/50 text-muted-foreground"
-                          }`}
-                        >
-                          {subscriber.isActive ? "ACTIVE" : "INACTIVE"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {subscriber.source ? (
-                          <a href={subscriber.source} target="_blank" rel="noopener noreferrer" className="hover:text-primary inline-flex items-center gap-1.5 transition-colors">
-                            <Globe className="h-3 w-3" />
-                            <span className="font-mono text-[10px]">SOURCE</span>
-                          </a>
-                        ) : (
-                          <span className="text-muted-foreground/50">—</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                  {!loading && newsletterSubscribers.length === 0 && (
-                    <tr>
-                      <td colSpan={4} className="px-4 py-12 text-center">
-                        <div className="text-muted-foreground/50 font-mono text-[10px] tracking-widest uppercase">
-                          NO_RECORDS_FOUND
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </Container>
+        )}
       </section>
-    </div>
+
+      <DottedSeparator className="my-6" />
+
+      <section>
+        <p className="text-foreground font-medium">Newsletter subscribers</p>
+
+        {loading ? (
+          <p className="text-foreground/40 mt-4 font-mono text-xs tracking-widest uppercase">
+            Loading...
+          </p>
+        ) : newsletterSubscribers.length === 0 ? (
+          <p className="text-foreground/40 mt-4 font-mono text-xs tracking-widest uppercase">
+            No records
+          </p>
+        ) : (
+          <div className="mt-4 flex flex-col gap-3">
+            {newsletterSubscribers.map((sub) => (
+              <div key={sub.id} className="flex flex-col gap-1.5 md:flex-row md:items-center md:gap-2">
+                <a
+                  className="text-foreground font-medium hover:text-primary transition-colors"
+                  href={`mailto:${sub.email}`}
+                >
+                  <Mail className="mr-1 inline h-3 w-3" />
+                  <span className="font-mono text-xs">{sub.email}</span>
+                </a>
+                <div className="hidden size-1 rounded-full bg-neutral-200 md:block" />
+                <span
+                  className={`font-mono text-[10px] tracking-widest uppercase ${
+                    sub.isActive ? "text-emerald-500" : "text-foreground/30"
+                  }`}
+                >
+                  {sub.isActive ? "Active" : "Inactive"}
+                </span>
+                <span className="text-foreground/40 font-mono text-[10px] tracking-widest uppercase">
+                  {formatDateTime(sub.updatedAt)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+    </Container>
   );
 }

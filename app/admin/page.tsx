@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { signInWithEmail } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { motion } from "motion/react";
+import { SPRING_CONFIG } from "@/lib/motion-config";
 import Container from "@/components/container";
+import { Subheading } from "@/components/subheading";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -36,79 +35,77 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="bg-background relative flex min-h-screen items-center justify-center overflow-hidden px-4">
-      <div className="bg-grid-blueprint text-foreground pointer-events-none absolute inset-0 opacity-10" />
-
-      <Container className="relative z-10 max-w-md">
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <Container className="max-w-md">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="bg-card border-border relative border p-8"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={SPRING_CONFIG}
         >
-          <div className="from-primary/5 pointer-events-none absolute inset-0 bg-linear-to-br to-transparent" />
+          <Subheading>System access</Subheading>
 
-          <div className="border-border relative z-10 mb-8 border-b pb-6 text-center">
-            <h1 className="font-display text-foreground mb-2 text-2xl font-bold tracking-widest uppercase">
-              SYS_ADMIN_ACCESS
-            </h1>
-            <p className="text-primary font-mono text-[10px] tracking-widest uppercase">
-              RESTRICTED TO AUTHORIZED PERSONNEL ONLY. LOGGING ALL ATTEMPTS.
-            </p>
-          </div>
+          <p className="text-foreground mt-4 text-base font-medium">
+            Admin panel
+          </p>
+          <p className="text-foreground/70 text-base">
+            Restricted to authorized personnel. All attempts are logged.
+          </p>
 
-          <form onSubmit={handleLogin} className="relative z-10 space-y-6">
+          <form onSubmit={handleLogin} className="mt-8 flex flex-col gap-4">
             {error && (
-              <div className="bg-destructive/10 border-destructive text-destructive border p-3 font-mono text-[10px] tracking-widest uppercase">
-                [ERROR] {error}
+              <div className="bg-destructive/10 border-destructive text-destructive border p-3 font-mono text-xs tracking-wider">
+                {error}
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email">IDENTIFIER_STRING (EMAIL)</Label>
-              <Input
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="email"
+                className="text-foreground/40 font-mono text-xs uppercase tracking-wide"
+              >
+                Email
+              </label>
+              <input
                 id="email"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="HELLO@IAMAMITKUMAR.DEV"
-                className="font-mono"
+                placeholder="you@domain.com"
+                className="bg-card/30 border-border text-foreground placeholder:text-foreground/30 w-full border px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">ACCESS_KEY (PASSWORD)</Label>
-              <Input
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="password"
+                className="text-foreground/40 font-mono text-xs uppercase tracking-wide"
+              >
+                Password
+              </label>
+              <input
                 id="password"
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
-                className="font-mono"
+                placeholder="••••••••"
+                className="bg-card/30 border-border text-foreground placeholder:text-foreground/30 w-full border px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
 
-            <Button type="submit" disabled={loading} className="mt-4 w-full">
-              {loading ? (
-                <>
-                  <span className="bg-primary mr-2 h-2 w-2 animate-ping" />
-                  AUTHENTICATING_SYS...
-                </>
-              ) : (
-                <>
-                  <span className="border-primary mr-2 flex h-2 w-2 items-center justify-center border">
-                    <span className="bg-primary h-1 w-1" />
-                  </span>
-                  INIT_SECURE_ACCESS
-                </>
-              )}
-            </Button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-foreground text-background mt-2 w-full cursor-pointer px-4 py-2.5 text-sm font-medium transition-opacity hover:opacity-90 disabled:cursor-default disabled:opacity-60"
+            >
+              {loading ? "Authenticating..." : "Sign in"}
+            </button>
           </form>
 
-          <div className="border-border absolute top-0 right-0 h-4 w-4 border-t border-r" />
-          <div className="border-border absolute bottom-0 left-0 h-4 w-4 border-b border-l" />
+          <p className="text-foreground/30 mt-6 font-mono text-[10px] tracking-widest uppercase">
+            Secure session • Encrypted
+          </p>
         </motion.div>
       </Container>
     </div>
