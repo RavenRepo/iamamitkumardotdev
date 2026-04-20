@@ -44,11 +44,11 @@ export const Navbar = () => {
             className="aspect-square size-6 rounded-md shadow-2xl"
           />
         </motion.div>
-        <h1 className="text-foreground text-xl font-medium tracking-tight md:text-2xl">
+        <div className="text-foreground text-xl font-medium tracking-tight md:text-2xl">
           Amit Kumar{" "}
           <span className="text-foreground/50 font-normal">aka</span>{" "}
           <span className="font-normal italic">growthperclick</span>
-        </h1>
+        </div>
       </div>
       <div className="flex items-center gap-4">
         {links.map((link) => {

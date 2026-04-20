@@ -7,6 +7,7 @@ import Container from "@/components/container";
 import { DottedSeparator } from "@/components/separator";
 import { BlogArticleShell } from "@/components/blog/blog-article-shell";
 import { ClapButton } from "@/components/blog/clap-button";
+import { NewsletterCTA } from "@/components/blog/newsletter-cta";
 import { getPublishedPosts, getPostBySlug, SITE_URL } from "@/lib/blog";
 
 type PageProps = {
@@ -28,23 +29,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const url = `${SITE_URL}/blog/${post.slug}`;
 
+  const articleDescription = post.excerpt || post.summary || `Blog post by Amit Kumar — ${post.title}`;
+
   return {
     title: `${post.title} - Amit Kumar`,
-    description: post.excerpt || post.summary || "",
+    description: articleDescription,
     alternates: { canonical: url },
     openGraph: {
       title: post.title,
-      description: post.excerpt || post.summary || "",
+      description: articleDescription,
       url,
       type: "article",
       publishedTime: post.publishedAt || undefined,
-      images: post.image ? [post.image] : undefined,
+      images: post.image ? [post.image] : ["/images/og-image.png"],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
-      description: post.excerpt || post.summary || "",
-      images: post.image ? [post.image] : undefined,
+      description: articleDescription,
+      images: post.image ? [post.image] : ["/images/og-image.png"],
     },
   };
 }
@@ -136,6 +139,8 @@ export default async function BlogPostPage({ params }: PageProps) {
             <DottedSeparator className="my-8" />
           </div>
         )}
+        <NewsletterCTA />
+        <DottedSeparator className="my-8" />
       </Container>
     </>
   );

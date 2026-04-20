@@ -28,11 +28,24 @@ import {
 } from "@tabler/icons-react";
 
 export const metadata: Metadata = {
-  title: "Workflow - Amit Kumar",
+  title: "Workflow — My AI-First Dev Stack & Tools",
   description:
     "My AI-first dev workflow — the tools, languages, editors, and systems powering my projects.",
   alternates: {
     canonical: "/workflow",
+  },
+  openGraph: {
+    title: "Workflow — My AI-First Dev Stack & Tools",
+    description:
+      "My AI-first dev workflow — the tools, languages, editors, and systems powering my projects.",
+    images: ["/images/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Workflow — My AI-First Dev Stack & Tools",
+    description:
+      "My AI-first dev workflow — the tools, languages, editors, and systems powering my projects.",
+    images: ["/images/og-image.png"],
   },
 };
 

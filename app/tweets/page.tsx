@@ -6,11 +6,24 @@ import Container from "@/components/container";
 import { DottedSeparator } from "@/components/separator";
 
 export const metadata: Metadata = {
-  title: "Tweets - Amit Kumar",
+  title: "Tweets — Build-in-Public Posts & Updates",
   description:
     "A curated timeline of my build-in-public posts on products, launches, growth, and indie hacker execution.",
   alternates: {
     canonical: "/tweets",
+  },
+  openGraph: {
+    title: "Tweets — Build-in-Public Posts & Updates",
+    description:
+      "A curated timeline of my build-in-public posts on products, launches, growth, and indie hacker execution.",
+    images: ["/images/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tweets — Build-in-Public Posts & Updates",
+    description:
+      "A curated timeline of my build-in-public posts on products, launches, growth, and indie hacker execution.",
+    images: ["/images/og-image.png"],
   },
 };
 

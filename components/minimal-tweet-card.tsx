@@ -65,7 +65,7 @@ function MediaBlock({ tweet }: { tweet: EnrichedTweet }) {
             <img
               key={media.media_url_https}
               src={thumbSrc}
-              alt={isPhoto ? media.ext_alt_text || "" : ""}
+              alt={isPhoto ? media.ext_alt_text || "Photo shared in tweet" : "Video thumbnail from tweet"}
               className="pointer-events-none max-h-80 w-full rounded-md object-cover"
               loading="lazy"
             />

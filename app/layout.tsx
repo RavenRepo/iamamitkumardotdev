@@ -63,9 +63,13 @@ export const metadata: Metadata = {
     images: ["/images/og-image.png"],
   },
   icons: {
-    icon: "/profile.jpg",
-    shortcut: "/profile.jpg",
-    apple: "/profile.jpg",
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
   robots: {
     index: true,
@@ -120,6 +124,18 @@ export default function RootLayout({ children }) {
     ],
   };
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
+    name: "Amit Kumar",
+    alternateName: "iamamitkumar.dev",
+    url: siteUrl,
+    author: { "@id": `${siteUrl}/#person` },
+    publisher: { "@id": `${siteUrl}/#person` },
+    inLanguage: "en-US",
+  };
+
   return (
     <html
       lang="en"
@@ -137,6 +153,12 @@ export default function RootLayout({ children }) {
           id="person-jsonld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+          strategy="afterInteractive"
+        />
+        <Script
+          id="website-jsonld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
           strategy="afterInteractive"
         />
         <Settings />

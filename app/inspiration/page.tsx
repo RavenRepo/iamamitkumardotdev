@@ -5,11 +5,24 @@ import { DottedSeparator } from "@/components/separator";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Inspiration - Amit Kumar",
+  title: "Inspiration — People & Products That Shape My Work",
   description:
     "People, products, and systems that shape how I ship MVPs fast, validate demand, and build distribution.",
   alternates: {
     canonical: "/inspiration",
+  },
+  openGraph: {
+    title: "Inspiration — People & Products That Shape My Work",
+    description:
+      "People, products, and systems that shape how I ship MVPs fast, validate demand, and build distribution.",
+    images: ["/images/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Inspiration — People & Products That Shape My Work",
+    description:
+      "People, products, and systems that shape how I ship MVPs fast, validate demand, and build distribution.",
+    images: ["/images/og-image.png"],
   },
 };
 
@@ -20,7 +33,7 @@ export default async function InspirationPage() {
       description: "Product taste and storytelling for simple, internet-first products.",
       href: "https://x.com/jamesm",
       src: (
-        <img src="/inspiration/james.jpg" alt="james" className="size-full" />
+        <img src="/inspiration/james.jpg" alt="James — Product taste and storytelling for simple, internet-first products" className="size-full" loading="lazy" />
       ),
     },
     {
@@ -45,7 +58,7 @@ export default async function InspirationPage() {
       title: "Oğuz",
       description: "High visual quality that pushes my shipping bar higher.",
       href: "https://x.com/oguzyagizkara",
-      src: <img src="/inspiration/oguz.jpg" alt="oguz" className="size-full" />,
+      src: <img src="/inspiration/oguz.jpg" alt="Oğuz — High visual quality that pushes shipping bar higher" className="size-full" loading="lazy" />,
     },
     {
       title: "Interface Craft",
@@ -170,7 +183,7 @@ export default async function InspirationPage() {
       description: "Brand and interface craft that feels opinionated and premium.",
       href: "https://x.com/PixelJanitor",
       src: (
-        <img src="/inspiration/derek.jpg" alt="Derek" className="size-full" />
+        <img src="/inspiration/derek.jpg" alt="Derek Briggs — Brand and interface craft that feels opinionated and premium" className="size-full" loading="lazy" />
       ),
     },
     {
@@ -196,7 +209,7 @@ export default async function InspirationPage() {
       description: "Design-engineering detail that inspires cleaner product experiences.",
       href: "https://rauno.me/",
       src: (
-        <img src="/inspiration/rauno.jpg" alt="rauno" className="size-full" />
+        <img src="/inspiration/rauno.jpg" alt="Rauno — Design-engineering detail that inspires cleaner product experiences" className="size-full" loading="lazy" />
       ),
     },
     {
@@ -204,7 +217,7 @@ export default async function InspirationPage() {
       description: "Leverage-first thinking for product, distribution, and career bets.",
       href: "https://nav.al",
       src: (
-        <img src="/inspiration/naval.jpg" alt="Naval" className="size-full" />
+        <img src="/inspiration/naval.jpg" alt="Naval Ravikant — Leverage-first thinking for product, distribution, and career bets" className="size-full" loading="lazy" />
       ),
     },
     {

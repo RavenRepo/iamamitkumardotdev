@@ -10,7 +10,6 @@ import { WorkWithMe } from "@/components/work-with-me";
 import { VidoTask } from "@/components/vidotask";
 
 export const metadata: Metadata = {
-  title: "Amit Kumar",
   description:
     "Indie hacker building AI products in public — from LaunchSuite.tech to multi-agent systems, growth experiments, and fast MVP launches.",
   alternates: {

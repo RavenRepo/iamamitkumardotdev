@@ -8,11 +8,24 @@ import { LinkPreview } from "@/components/link-preview";
 import { DottedSeparator } from "@/components/separator";
 
 export const metadata: Metadata = {
-  title: "Sponsor - Amit Kumar",
+  title: "Sponsor — Partner With Me for Founder-Focused Collabs",
   description:
     "Partner with me on founder-focused collaborations, product launches, and distribution experiments.",
   alternates: {
     canonical: "/sponsor",
+  },
+  openGraph: {
+    title: "Sponsor — Partner With Me for Founder-Focused Collabs",
+    description:
+      "Partner with me on founder-focused collaborations, product launches, and distribution experiments.",
+    images: ["/images/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sponsor — Partner With Me for Founder-Focused Collabs",
+    description:
+      "Partner with me on founder-focused collaborations, product launches, and distribution experiments.",
+    images: ["/images/og-image.png"],
   },
 };
 
