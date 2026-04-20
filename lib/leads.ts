@@ -21,7 +21,7 @@ export async function listNewsletterSubscribers(limit = 50) {
   const { data, error } = await supabaseAdmin
     .from("newsletter_subscribers")
     .select("*")
-    .order("created_at", { ascending: false })
+    .order("subscribed_at", { ascending: false })
     .limit(limit);
 
   if (error) {
