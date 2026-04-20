@@ -60,6 +60,75 @@ export interface Database {
         };
         Relationships: [];
       };
+      newsletter_subscribers: {
+        Row: {
+          id: number;
+          email: string;
+          source: string | null;
+          ip: string | null;
+          userAgent: string | null;
+          isActive: boolean;
+          subscribedAt: string;
+          updatedAt: string;
+        };
+        Insert: {
+          id?: number;
+          email: string;
+          source?: string | null;
+          ip?: string | null;
+          userAgent?: string | null;
+          isActive?: boolean;
+          subscribedAt?: string;
+          updatedAt?: string;
+        };
+        Update: {
+          id?: number;
+          email?: string;
+          source?: string | null;
+          ip?: string | null;
+          userAgent?: string | null;
+          isActive?: boolean;
+          subscribedAt?: string;
+          updatedAt?: string;
+        };
+        Relationships: [];
+      };
+      contact_inquiries: {
+        Row: {
+          id: number;
+          name: string;
+          email: string;
+          subject: string;
+          message: string;
+          source: string | null;
+          ip: string | null;
+          userAgent: string | null;
+          createdAt: string;
+        };
+        Insert: {
+          id?: number;
+          name: string;
+          email: string;
+          subject?: string | null;
+          message: string;
+          source?: string | null;
+          ip?: string | null;
+          userAgent?: string | null;
+          createdAt?: string;
+        };
+        Update: {
+          id?: number;
+          name?: string;
+          email?: string;
+          subject?: string | null;
+          message?: string;
+          source?: string | null;
+          ip?: string | null;
+          userAgent?: string | null;
+          createdAt?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;

@@ -24,7 +24,7 @@ ssh -i "${PEM_KEY}" -o StrictHostKeyChecking=accept-new "${EC2_USER}@${EC2_HOST}
 echo ""
 echo "▶ Restarting PM2 to pick up new env vars..."
 ssh -i "${PEM_KEY}" -o StrictHostKeyChecking=accept-new "${EC2_USER}@${EC2_HOST}" \
-  "cd ${APP_DIR} && pm2 restart devamitkumar && pm2 status"
+  "cd ${APP_DIR} && pm2 restart iamamitkumar && pm2 status"
 
 echo ""
 echo "✅ Env updated and app restarted!"

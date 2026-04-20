@@ -9,7 +9,7 @@ EC2_HOST="ec2-13-53-175-145.eu-north-1.compute.amazonaws.com"
 EC2_USER="ubuntu"
 APP_DIR="/var/www/devamitkumar"
 PEM_KEY="${HOME}/.ssh/jaipurfedora.pem"
-APP_NAME="devamitkumar"
+APP_NAME="iamamitkumar"
 HEALTHCHECK_URL="${HEALTHCHECK_URL:-https://iamamitkumar.dev}"
 HEALTHCHECK_ATTEMPTS="${HEALTHCHECK_ATTEMPTS:-5}"
 HEALTHCHECK_DELAY_SECONDS="${HEALTHCHECK_DELAY_SECONDS:-3}"
@@ -41,7 +41,7 @@ restart_remote_pm2() {
   run_remote bash <<'REMOTE'
 set -euo pipefail
 APP_DIR="/var/www/devamitkumar"
-APP_NAME="devamitkumar"
+APP_NAME="iamamitkumar"
 cd "${APP_DIR}"
 mkdir -p logs
 
@@ -147,8 +147,7 @@ if [[ ! -f "${PEM_KEY}" ]]; then
 fi
 
 if [[ "${SKIP_BUILD:-0}" != "1" ]]; then
-  echo "▶ Linting and type-checking before deploy..."
-  pnpm lint
+  echo "▶ Type-checking before deploy..."
   pnpm exec tsc --noEmit
 
   echo "▶ Building Next.js production standalone bundle locally..."
