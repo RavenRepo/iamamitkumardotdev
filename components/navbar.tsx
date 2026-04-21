@@ -19,6 +19,7 @@ const links = [
   { title: "Inspiration", href: "/inspiration" },
   { title: "Workflow", href: "/workflow" },
   { title: "Blog", href: "/blog" },
+  { title: "Newsletter", href: "/newsletter" },
   { title: "Sponsor", href: "/sponsor" },
 ];
 
