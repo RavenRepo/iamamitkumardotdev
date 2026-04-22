@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Subheading } from "./subheading";
-import Link from "next/link";
 import { Box } from "./box";
 import { cn } from "@/lib/utils";
 import {
@@ -13,13 +12,21 @@ import {
 } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "motion/react";
 import { SPRING_CONFIG } from "@/lib/motion-config";
+import { trackCTA } from "@/lib/analytics";
 
 type WorkItem = {
   title: string;
   description: string;
   boxClassName: string;
   skeleton: React.ReactNode;
-} & ({ type: "link"; href: string } | { type: "copyEmail"; email: string });
+  ctaType: string;
+} & ({ type: "mailto"; href: string } | { type: "copyEmail"; email: string });
+
+const CTA_MAP: Record<string, string> = {
+  "MVP Sprint": "mvp-sprint",
+  "Build + GTM": "build-gtm",
+  Collaborate: "collaborate",
+};
 
 export const WorkWithMe = () => {
   const [copied, setCopied] = useState(false);
@@ -29,9 +36,10 @@ export const WorkWithMe = () => {
     setMounted(true);
   }, []);
 
-  const handleCopyEmail = async (email: string) => {
+  const handleCopyEmail = async (email: string, title: string) => {
     try {
       await navigator.clipboard.writeText(email);
+      trackCTA("copy-email", { subject: title, cta_type: CTA_MAP[title] });
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
     } catch (error) {
@@ -43,8 +51,9 @@ export const WorkWithMe = () => {
     {
       title: "MVP Sprint",
       description: "Go from idea to launch-ready product with clear scope and speed.",
-      type: "link",
+      type: "mailto",
       href: "mailto:hi@iamamitkumar.dev?subject=MVP%20Sprint%20Request",
+      ctaType: "mvp-sprint",
       boxClassName:
         "bg-linear-to-b from-blue-400 to-blue-600 ring-offset-blue-500",
       skeleton: (
@@ -54,8 +63,9 @@ export const WorkWithMe = () => {
     {
       title: "Build + GTM",
       description: "Ship product and wire distribution loops from day zero.",
-      type: "link",
+      type: "mailto",
       href: "mailto:hi@iamamitkumar.dev?subject=Build%20and%20GTM%20Inquiry",
+      ctaType: "build-gtm",
       boxClassName:
         "bg-linear-to-b from-orange-400 to-orange-600 ring-offset-orange-500",
       skeleton: (
@@ -67,6 +77,7 @@ export const WorkWithMe = () => {
       description: "Partnerships, launch support, and indie hacker collaborations.",
       type: "copyEmail",
       email: "hi@iamamitkumar.dev",
+      ctaType: "collaborate",
       boxClassName:
         "bg-linear-to-b from-emerald-400 to-emerald-600 ring-offset-emerald-500",
       skeleton: (
@@ -91,7 +102,7 @@ export const WorkWithMe = () => {
             return (
               <button
                 type="button"
-                onClick={() => handleCopyEmail(item.email)}
+                onClick={() => handleCopyEmail(item.email, item.title)}
                 className="flex w-full cursor-pointer flex-col items-start gap-1 text-left md:flex-row md:items-center md:gap-2"
                 key={item.title}
               >
@@ -106,9 +117,12 @@ export const WorkWithMe = () => {
           }
 
           return (
-            <Link
-              href={item.href}
-              target="_blank"
+            <button
+              type="button"
+              onClick={() => {
+                trackCTA("mailto", { subject: item.title, cta_type: item.ctaType });
+                window.location.href = item.href;
+              }}
               className="flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2"
               key={item.title}
             >
@@ -118,7 +132,7 @@ export const WorkWithMe = () => {
               </p>
               <div className="hidden size-1 rounded-full bg-neutral-200 md:block"></div>
               <p className="text-foreground/70">{item.description}</p>
-            </Link>
+            </button>
           );
         })}
       </div>

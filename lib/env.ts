@@ -10,6 +10,8 @@ const envSchema = z.object({
   PROJECT_URL: z.string().url(),
   ANON_KEY: z.string().min(1),
   SERVICE_ROLE: z.string().min(1),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().optional(),
   DATABASE_URL: z.string().url(),
   NOTION_INTEGRATION_SECRET: z.string().min(1),
   NOTION_WEBHOOK_SECRET: z.string().optional(),

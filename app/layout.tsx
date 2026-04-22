@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Settings } from "@/components/settings";
+import { PageViewTracker } from "@/components/analytics/page-view-tracker";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -164,7 +165,10 @@ export default function RootLayout({ children }) {
         <Settings />
         <Navbar />
         <main className="flex min-h-screen flex-col">
-          <Providers>{children}</Providers>
+          <Providers>
+            <PageViewTracker />
+            {children}
+          </Providers>
         </main>
         <Footer />
         {analyticsDomain && analyticsScriptUrl ? (

@@ -1,7 +1,8 @@
+"use client";
+
 import type { Tweet } from "react-tweet/api";
 import { enrichTweet, getMediaUrl, type EnrichedTweet } from "react-tweet";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
-import Link from "next/link";
 
 type MinimalTweetCardProps = {
   tweet: Tweet;
@@ -106,10 +107,9 @@ export function MinimalTweetCard({ tweet, href }: MinimalTweetCardProps) {
   const profileUrl = enriched.user.url;
 
   return (
-    <Link
-      href={href}
-      target="_blank"
-      className="mb-4 inline-block w-full min-w-0 break-inside-avoid align-top"
+    <div
+      className="mb-4 inline-block w-full min-w-0 break-inside-avoid align-top cursor-pointer"
+      onClick={() => window.open(href, "_blank", "noopener,noreferrer")}
     >
       <article className="relative rounded-lg bg-white p-3 text-sm shadow-sm ring-1 shadow-black/10 ring-black/10">
         {/* <a
@@ -154,6 +154,6 @@ export function MinimalTweetCard({ tweet, href }: MinimalTweetCardProps) {
           <MediaBlock tweet={enriched} />
         </div>
       </article>
-    </Link>
+    </div>
   );
 }
