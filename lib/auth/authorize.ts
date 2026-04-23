@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { env } from "@/lib/env";
+import { getUnauthorizedResourceMetadataHeader } from "@/lib/agent-discovery";
 
 export type UserRole = "user" | "admin";
 
@@ -12,7 +13,9 @@ interface AuthResult {
 }
 
 const ADMIN_USER_IDS = process.env.ADMIN_USER_IDS
-  ? process.env.ADMIN_USER_IDS.split(",").map((id) => id.trim()).filter(Boolean)
+  ? process.env.ADMIN_USER_IDS.split(",")
+      .map((id) => id.trim())
+      .filter(Boolean)
   : [];
 
 async function isAdminUser(userId: string): Promise<boolean> {
@@ -40,19 +43,35 @@ export async function requireAuth(req: NextRequest): Promise<AuthResult> {
   });
 
   const authHeader = req.headers.get("authorization");
-  const token = authHeader?.startsWith("Bearer ") ? authHeader.substring(7) : undefined;
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.substring(7)
+    : undefined;
 
   const {
     data: { user },
     error,
-  } = token ? await supabase.auth.getUser(token) : await supabase.auth.getUser();
+  } = token
+    ? await supabase.auth.getUser(token)
+    : await supabase.auth.getUser();
 
   if (error || !user) {
-    console.error("Auth verification failed:", { error, hasUser: !!user, hasToken: !!token });
+    console.error("Auth verification failed:", {
+      error,
+      hasUser: !!user,
+      hasToken: !!token,
+    });
     return {
       authorized: false,
       session: null,
-      response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
+      response: NextResponse.json(
+        { error: "Unauthorized" },
+        {
+          status: 401,
+          headers: {
+            "WWW-Authenticate": getUnauthorizedResourceMetadataHeader(),
+          },
+        },
+      ),
     };
   }
 

@@ -10,6 +10,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Settings } from "@/components/settings";
 import { PageViewTracker } from "@/components/analytics/page-view-tracker";
+import { WebMcpProvider } from "@/components/agents/webmcp-provider";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -167,6 +168,7 @@ export default function RootLayout({ children }) {
         <main className="flex min-h-screen flex-col">
           <Providers>
             <PageViewTracker />
+            <WebMcpProvider />
             {children}
           </Providers>
         </main>
