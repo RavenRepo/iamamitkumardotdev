@@ -184,6 +184,7 @@ export async function middleware(request: NextRequest) {
     if (description)
       frontmatter += `description: "${description.replace(/"/g, '\\"')}"\n`;
     frontmatter += `url: "${url.pathname}"\n`;
+    frontmatter += `author: "Amit Kumar (aka growthperclick)"\n`;
     frontmatter += "---\n\n";
 
     const fullMarkdown = frontmatter + markdown;
