@@ -55,11 +55,17 @@ I publish founder notes, build logs, and playbooks on [Substack](https://substac
 
 ## Building now
 
-- VidoTask — turns saved social content into actionable plans.
+- VidoTask — turns saved social content into actionable plans. Try [vidotask.com](https://vidotask.com) (in active development).
 - ComplianceHQ — AI-powered compliance automation for startup security readiness.
 - SharkOS — LinkedIn operating system replacing multiple GTM SaaS tools.
 - BrandCo — AI brand strategy engine for conversion-led positioning.
 - JARVIS OS — local-first AI morning briefing assistant for focused execution.
+
+### How VidoTask fixes it
+
+1. **Auto-import saves** — Connect Instagram, TikTok, and LinkedIn; saves sync automatically with no manual entry.
+2. **AI-powered task extraction** — Each save becomes concrete next steps (e.g. recipe → grocery list, tutorial → schedule).
+3. **Actionable plans, not bookmarks** — Structured tasks with deadlines and context instead of a dead save folder.
 
 ## Explore
 

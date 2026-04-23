@@ -17,6 +17,17 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const analyticsDomain = process.env.NEXT_PUBLIC_ANALYTICS_DOMAIN;
 const analyticsScriptUrl = process.env.NEXT_PUBLIC_ANALYTICS_SCRIPT_URL;
 
+function isConfiguredAnalyticsScriptUrl(url: string | undefined): url is string {
+  if (!url?.trim()) return false;
+  if (/placeholder|your.?script|your_domain/i.test(url)) return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:";
+  } catch {
+    return false;
+  }
+}
+
 const siteUrl = "https://iamamitkumar.dev";
 
 export const metadata: Metadata = {
@@ -163,7 +174,6 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
           strategy="afterInteractive"
         />
-        <Settings />
         <Navbar />
         <main className="flex min-h-screen flex-col">
           <Providers>
@@ -173,7 +183,10 @@ export default function RootLayout({ children }) {
           </Providers>
         </main>
         <Footer />
-        {analyticsDomain && analyticsScriptUrl ? (
+        <Settings />
+        {analyticsDomain &&
+        analyticsScriptUrl &&
+        isConfiguredAnalyticsScriptUrl(analyticsScriptUrl) ? (
           <Script
             src={analyticsScriptUrl}
             data-domain={analyticsDomain}

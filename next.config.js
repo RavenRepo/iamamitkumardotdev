@@ -14,13 +14,25 @@ function getSupabaseOrigin() {
 
 const supabaseOrigin = getSupabaseOrigin();
 
+// Without nonce/hash on every script tag, `'strict-dynamic'` disables host allowlisting
+// (`'self'` is ignored for extra scripts), which blocks Next.js dev chunks and production
+// bundles. Use `'self'` + explicit analytics CDNs instead; add nonces later if you need
+// strict-dynamic-level guarantees.
+const scriptSrcParts = [
+  "'self'",
+  "'unsafe-inline'",
+  ...(isProd ? [] : ["'unsafe-eval'"]),
+  "https://cdn.mxpnl.com",
+  "https://www.googletagmanager.com",
+];
+
 const cspParts = [
   "default-src 'self'",
   "base-uri 'self'",
   "frame-ancestors 'self'",
   "form-action 'self'",
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline' 'strict-dynamic' https://cdn.mxpnl.com https://www.googletagmanager.com",
+  `script-src ${scriptSrcParts.join(" ")}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://*.mixpanel.com https://*.google-analytics.com https://*.googletagmanager.com https://avatars.githubusercontent.com https://pbs.twimg.com https://assets.aceternity.com https://api.microlink.io",

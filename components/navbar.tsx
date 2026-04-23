@@ -27,31 +27,33 @@ export const Navbar = () => {
   const pathname = usePathname();
 
   return (
-    <nav className="mx-auto flex max-w-2xl flex-col items-start gap-4 px-4 pt-4 md:pt-8">
-      <div className="flex items-center gap-2 perspective-distant">
+    <nav className="mx-auto flex max-w-2xl flex-col items-start gap-3 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-0.5 md:gap-4 md:pt-8">
+      <div className="flex min-w-0 items-center gap-2 perspective-distant">
         <motion.div
           variants={GENERAL_VARIANT}
           initial="initial"
           animate="animate"
           exit="exit"
           transition={SPRING_CONFIG}
-          className="rounded-md bg-white shadow-md dark:bg-neutral-800"
+          className="shrink-0 rounded-md bg-white shadow-md dark:bg-neutral-800"
         >
           <Image
             src="/profile.jpg"
             alt="Amit Kumar profile photo"
             width={40}
             height={40}
-            className="aspect-square size-6 rounded-md shadow-2xl"
+            className="aspect-square size-7 rounded-md shadow-2xl md:size-8"
           />
         </motion.div>
-        <div className="text-foreground text-xl font-medium tracking-tight md:text-2xl">
-          Amit Kumar{" "}
-          <span className="text-foreground/50 font-normal">aka</span>{" "}
-          <span className="font-normal italic">growthperclick</span>
+        <div className="text-foreground min-w-0 text-base font-medium tracking-tight sm:text-lg md:text-2xl">
+          <span className="text-balance">
+            Amit Kumar{" "}
+            <span className="text-foreground/50 font-normal">aka</span>{" "}
+            <span className="font-normal italic">growthperclick</span>
+          </span>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-2 text-sm md:gap-x-4 md:text-base">
         {links.map((link) => {
           const active = isActivePath(pathname, link.href);
           return (

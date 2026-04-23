@@ -1,5 +1,4 @@
 "use client";
-import { SPRING_CONFIG } from "@/lib/motion-config";
 import { cn } from "@/lib/utils";
 import { IconSettingsFilled, IconX } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -174,7 +173,7 @@ export const Settings = () => {
 
   useEffect(() => {
     if (!open) return;
-    const handleClick = (e: MouseEvent) => {
+    const handleMouseDown = (e: MouseEvent) => {
       if (
         containerRef.current &&
         !containerRef.current.contains(e.target as Node)
@@ -182,8 +181,8 @@ export const Settings = () => {
         setOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("mousedown", handleMouseDown);
+    return () => document.removeEventListener("mousedown", handleMouseDown);
   }, [open]);
 
   const handleFont = (f: FontOption) => {
@@ -203,55 +202,63 @@ export const Settings = () => {
   return (
     <div
       ref={containerRef}
-      className="fixed top-4 right-4 z-50 flex flex-col items-end"
+      className="fixed top-[max(0.75rem,env(safe-area-inset-top))] right-[max(0.75rem,env(safe-area-inset-right))] z-[200] flex flex-col items-end"
     >
       <AnimatePresence mode="wait">
         {!open ? (
-          <motion.button
+          <button
             key="trigger"
-            layoutId="settings-container"
+            type="button"
             onClick={() => setOpen(true)}
-            whileTap={{ scale: 0.9 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
+            aria-label="Change site font and accent colors"
+            aria-expanded={false}
+            aria-haspopup="dialog"
             className={cn(
-              "fixed top-5 right-5 flex aspect-square size-8 items-center justify-center rounded-lg bg-linear-to-b align-middle ring-1 ring-white/20 ring-offset-2 ring-inset",
+              "flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg bg-linear-to-b align-middle shadow-md ring-1 ring-white/20 ring-offset-2 ring-inset transition active:scale-95 md:size-8 md:min-h-0 md:min-w-0 md:aspect-square",
               colorConfig.gradientFrom,
               colorConfig.gradientTo,
               colorConfig.ringOffset,
             )}
           >
-            <IconSettingsFilled className="size-4 shrink-0 text-white drop-shadow-xl drop-shadow-black/40" />
-          </motion.button>
+            <IconSettingsFilled className="size-5 shrink-0 text-white drop-shadow-xl drop-shadow-black/40 md:size-4" />
+          </button>
         ) : (
           <motion.div
             key="panel"
-            layoutId="settings-container"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            role="dialog"
+            aria-label="Appearance settings"
+            aria-modal="true"
             transition={{ duration: 0.15, ease: "easeOut" }}
             className={cn(
-              "fixed top-4 right-4 w-56 rounded-xl border border-neutral-200 bg-linear-to-b p-4 shadow-sm ring-1 ring-white/20 ring-offset-2 ring-inset dark:border-neutral-700",
+              "w-[min(calc(100vw-1.5rem),14rem)] rounded-xl border border-neutral-200 bg-linear-to-b p-4 shadow-lg ring-1 ring-white/20 ring-offset-2 ring-inset dark:border-neutral-700",
               colorConfig.gradientFrom,
               colorConfig.gradientTo,
               colorConfig.ringOffset,
             )}
           >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.15 }}
-            >
-              <div className="mb-3">
-                <div className="flex items-start gap-1.5">
+            <motion.div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-medium text-white/95">
+                  Appearance
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="rounded-md p-1 text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+                  aria-label="Close appearance settings"
+                >
+                  <IconX className="size-4" stroke={1.5} />
+                </button>
+              </div>
+              <div className="mb-1">
+                <div className="flex flex-wrap items-center gap-1.5">
                   {FONTS.map((f) => (
                     <button
+                      type="button"
                       key={f.id}
                       onClick={() => handleFont(f.id)}
                       style={{ fontFamily: f.variable }}
+                      aria-pressed={font === f.id}
                       className={cn(
                         `rounded-md bg-linear-to-b px-2 py-1 text-xs font-light text-white shadow-sm ring-1 shadow-black/10 ring-black/10 transition-all duration-200`,
                         font === f.id && colorConfig.gradientFrom,
@@ -266,13 +273,16 @@ export const Settings = () => {
                 </div>
               </div>
               <DottedSeparator />
-              <div className="mt-4">
-                <div className="flex gap-2">
+              <div>
+                <div className="flex flex-wrap gap-2">
                   {COLORS.map((c) => (
                     <button
+                      type="button"
                       key={c.id}
                       onClick={() => handleColor(c.id)}
                       className="group flex flex-col items-center gap-1"
+                      aria-label={c.label}
+                      aria-pressed={color === c.id}
                     >
                       <div
                         className={cn(

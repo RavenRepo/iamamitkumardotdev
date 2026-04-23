@@ -94,8 +94,8 @@ export const VidoTask = () => {
             return (
               <motion.div
                 key={p.label}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ y: 4 }}
+                animate={{ y: 0 }}
                 transition={{ ...SPRING_CONFIG, delay: i * 0.05 }}
               >
                 <Box className={p.boxClassName}>
@@ -108,8 +108,8 @@ export const VidoTask = () => {
           <span className="text-foreground/30 px-1 text-sm">→</span>
 
           <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 4 }}
+            animate={{ y: 0 }}
             transition={{ ...SPRING_CONFIG, delay: 0.2 }}
           >
             <Box className="bg-linear-to-b from-violet-400 to-violet-600 ring-offset-violet-500">
@@ -151,8 +151,8 @@ export const VidoTask = () => {
           return (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ y: 6 }}
+              animate={{ y: 0 }}
               transition={{ ...SPRING_CONFIG, delay: 0.3 + i * 0.08 }}
               className="flex flex-col"
             >
