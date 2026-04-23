@@ -196,12 +196,12 @@ export function WebMcpProvider() {
     const tools = buildTools();
 
     try {
-      if (typeof modelContext.registerTool === "function") {
+      if (typeof modelContext.provideContext === "function") {
+        modelContext.provideContext({ tools }, { signal: controller.signal });
+      } else if (typeof modelContext.registerTool === "function") {
         for (const tool of tools) {
           modelContext.registerTool(tool, { signal: controller.signal });
         }
-      } else if (typeof modelContext.provideContext === "function") {
-        modelContext.provideContext({ tools }, { signal: controller.signal });
       }
     } catch (error) {
       if (process.env.NODE_ENV !== "production") {

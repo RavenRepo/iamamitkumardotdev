@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const MARKDOWN_BYPASS_HEADER = "x-markdown-negotiation-bypass";
-
 function estimateTokens(text: string): number {
   return Math.ceil(text.length / 4);
 }
@@ -22,71 +20,138 @@ function acceptsMarkdown(acceptHeader: string): boolean {
     });
 }
 
-function decodeHtmlEntities(text: string): string {
-  return text
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&#[xX]27;/g, "'")
-    .replace(/&nbsp;/g, " ");
+function titleFromPath(pathname: string): string {
+  if (pathname === "/") return "Amit Kumar";
+
+  return pathname
+    .split("/")
+    .filter(Boolean)
+    .at(-1)!
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function htmlToMarkdown(html: string): string {
-  let md = html;
+function pageMarkdown(pathname: string): {
+  title: string;
+  description: string;
+  body: string;
+} {
+  if (pathname === "/") {
+    return {
+      title: "Amit Kumar | Agentic Architect & Full-Stack Engineer",
+      description:
+        "Indie hacker building AI products in public — from LaunchSuite.tech to multi-agent systems, growth experiments, and fast MVP launches.",
+      body: `I'm an indie hacker shipping AI products in public. I go from idea to MVP fast, test demand, and iterate weekly. I share the full journey on [X / Twitter](https://x.com/growthperclick) — wins, mistakes, and what actually worked.
 
-  md = md.replace(/<script[\s\S]*?<\/script>/gi, "");
-  md = md.replace(/<style[\s\S]*?<\/style>/gi, "");
-  md = md.replace(/<noscript[\s\S]*?<\/noscript>/gi, "");
-  md = md.replace(/<svg[\s\S]*?<\/svg>/gi, "");
-  md = md.replace(/<nav[\s\S]*?<\/nav>/gi, "");
-  md = md.replace(/<footer[\s\S]*?<\/footer>/gi, "");
-  md = md.replace(/<header[\s\S]*?<\/header>/gi, "");
+I launched [LaunchSuite.tech](https://launchsuite.tech) as a production SaaS boilerplate and pushed it to Product Hunt. I also build high-leverage products in AI automation, trading intelligence, and growth systems.
 
-  md = md.replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, "\n\n# $1\n\n");
-  md = md.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, "\n\n## $1\n\n");
-  md = md.replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, "\n\n### $1\n\n");
-  md = md.replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi, "\n\n#### $1\n\n");
-  md = md.replace(/<h5[^>]*>([\s\S]*?)<\/h5>/gi, "\n\n##### $1\n\n");
-  md = md.replace(/<h6[^>]*>([\s\S]*?)<\/h6>/gi, "\n\n###### $1\n\n");
+I publish founder notes, build logs, and playbooks on [Substack](https://substack.com/@growthperclick) for builders who want speed plus real execution.
 
-  md = md.replace(/<p[^>]*>([\s\S]*?)<\/p>/gi, "\n\n$1\n\n");
-  md = md.replace(/<br\s*\/?>/gi, "\n");
-  md = md.replace(/<(strong|b)[^>]*>([\s\S]*?)<\/\1>/gi, "**$2**");
-  md = md.replace(/<(em|i)[^>]*>([\s\S]*?)<\/\1>/gi, "*$2*");
-  md = md.replace(/<a[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, "[$2]($1)");
-  md = md.replace(
-    /<img[^>]*src="([^"]*)"[^>]*alt="([^"]*)"[^>]*\/?>/gi,
-    "![$2]($1)",
-  );
-  md = md.replace(/<img[^>]*src="([^"]*)"[^>]*\/?>/gi, "![]($1)");
-  md = md.replace(
-    /<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/gi,
-    "\n\n```\n$1\n```\n\n",
-  );
-  md = md.replace(/<code[^>]*>([\s\S]*?)<\/code>/gi, "`$1`");
-  md = md.replace(
-    /<blockquote[^>]*>([\s\S]*?)<\/blockquote>/gi,
-    "\n\n> $1\n\n",
-  );
-  md = md.replace(/<ul[^>]*>([\s\S]*?)<\/ul>/gi, "\n\n$1\n\n");
-  md = md.replace(/<ol[^>]*>([\s\S]*?)<\/ol>/gi, "\n\n$1\n\n");
-  md = md.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, "- $1\n");
-  md = md.replace(/<hr[^>]*\/?>/gi, "\n\n---\n\n");
-  md = md.replace(/<[^>]+>/g, "");
+## Things I ship
 
-  md = decodeHtmlEntities(md);
+- [LaunchSuite.tech](https://launchsuite.tech) — shipped SaaS boilerplate MVP for founders.
+- [Product launches](https://www.producthunt.com) — public validation with real users.
+- [Build in public](https://x.com/growthperclick) — daily experiments on distribution, product, and growth loops.
 
-  return md.replace(/\n{3,}/g, "\n\n").trim();
+## Building now
+
+- VidoTask — turns saved social content into actionable plans.
+- ComplianceHQ — AI-powered compliance automation for startup security readiness.
+- SharkOS — LinkedIn operating system replacing multiple GTM SaaS tools.
+- BrandCo — AI brand strategy engine for conversion-led positioning.
+- JARVIS OS — local-first AI morning briefing assistant for focused execution.
+
+## Explore
+
+- [Blog](/blog)
+- [Newsletter](/newsletter)
+- [Workflow](/workflow)
+- [Tweets](/tweets)
+- [Sponsor](/sponsor)
+`,
+    };
+  }
+
+  if (pathname === "/blog") {
+    return {
+      title: "Blog — Founder Notes & Build Logs | Amit Kumar",
+      description:
+        "Founder notes, build logs, and technical writing on shipping products, AI systems, and growth experiments.",
+      body: `Founder notes, build logs, and technical writing on shipping products, AI systems, and growth experiments.
+
+## Recent writing
+
+- [Why Your AI Agent Pilot Never Makes It to Production (And How to Fix It)](/blog/ai-agent-pilot-to-production)
+- [How to Set Up OpenClaw: A Builder's Honest Setup Guide (2026)](/blog/how-to-set-up-openclaw-a-builder-s-honest-setup-guide-2026)
+- [What's Actually Inside Claude Code (It's More Impressive Than You Think)](/blog/what-is-inside-claude-code)
+- [How to Build Enterprise-Grade, Production-Ready AI Agents](/blog/how-to-build-enterprise-grade-production-ready-ai-agents)
+- [Building Enterprise-Grade Production-Ready AI Agents: My Practical Guide to Deployment](/blog/building-enterprise-grade-production-ready-ai-agents-my-practical-guide-to-deployment)
+
+## Stay in the loop
+
+Get build logs, shipping notes, and AI product breakdowns delivered to your inbox. No spam — just the stuff worth reading.
+`,
+    };
+  }
+
+  if (pathname.startsWith("/blog/")) {
+    const title = titleFromPath(pathname);
+    return {
+      title: `${title} | Amit Kumar`,
+      description:
+        "A public blog post by Amit Kumar about AI systems, product building, and growth experiments.",
+      body: `# ${title}
+
+This is a public Amit Kumar blog article.
+
+For the canonical HTML article, visit [${pathname}](${pathname}). Agents can also request site index pages with \`Accept: text/markdown\`.
+
+## Related links
+
+- [Blog index](/blog)
+- [Home](/)
+- [Newsletter](/newsletter)
+`,
+    };
+  }
+
+  const title = titleFromPath(pathname);
+  return {
+    title: `${title} | Amit Kumar`,
+    description:
+      "A public page on Amit Kumar's portfolio site for agentic architecture, product building, and growth experiments.",
+    body: `# ${title}
+
+This is a public page on Amit Kumar's portfolio site.
+
+## Useful links
+
+- [Home](/)
+- [Blog](/blog)
+- [Newsletter](/newsletter)
+- [Workflow](/workflow)
+- [Tweets](/tweets)
+- [Sponsor](/sponsor)
+`,
+  };
+}
+
+function buildMarkdown(pathname: string): string {
+  const page = pageMarkdown(pathname);
+
+  return `---
+title: "${page.title.replace(/"/g, '\\"')}"
+description: "${page.description.replace(/"/g, '\\"')}"
+url: "${pathname}"
+author: "Amit Kumar (aka growthperclick)"
+---
+
+${page.body.trim()}
+`;
 }
 
 export async function middleware(request: NextRequest) {
   if (request.method !== "GET") {
-    return NextResponse.next();
-  }
-
-  if (request.headers.get(MARKDOWN_BYPASS_HEADER) === "1") {
     return NextResponse.next();
   }
 
@@ -141,59 +206,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  try {
-    const htmlResponse = await fetch(request.url, {
-      headers: {
-        [MARKDOWN_BYPASS_HEADER]: "1",
-        Accept: "text/html",
-        "User-Agent": "Mozilla/5.0 (compatible; MarkdownBot/1.0)",
-      },
-    });
+  const markdown = buildMarkdown(pathname);
 
-    if (!htmlResponse.ok) {
-      return NextResponse.next();
-    }
-
-    const html = await htmlResponse.text();
-    const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-    const bodyContent = bodyMatch ? bodyMatch[1] : html;
-    const markdown = htmlToMarkdown(bodyContent);
-
-    const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-    const title = titleMatch ? decodeHtmlEntities(titleMatch[1].trim()) : "";
-    const descMatch = html.match(
-      /<meta[^>]+name="description"[^>]+content="([^"]*)"[^>]*\/?>/i,
-    );
-    const description = descMatch
-      ? decodeHtmlEntities(descMatch[1].trim())
-      : "";
-
-    let frontmatter = "---\n";
-    if (title) frontmatter += `title: "${title.replace(/"/g, '\\"')}"\n`;
-    if (description) {
-      frontmatter += `description: "${description.replace(/"/g, '\\"')}"\n`;
-    }
-    frontmatter += `url: "${pathname}"\n`;
-    frontmatter += 'author: "Amit Kumar (aka growthperclick)"\n';
-    frontmatter += "---\n\n";
-
-    const fullMarkdown = frontmatter + markdown;
-    const tokenCount = estimateTokens(fullMarkdown);
-
-    return new NextResponse(fullMarkdown, {
-      status: 200,
-      headers: {
-        "Cache-Control": "public, max-age=3600",
-        "Content-Signal": "ai-train=no, search=yes, ai-input=yes",
-        "Content-Type": "text/markdown; charset=utf-8",
-        Vary: "Accept",
-        "x-markdown-tokens": tokenCount.toString(),
-      },
-    });
-  } catch (error) {
-    console.error(`[Markdown] Error converting ${pathname}:`, error);
-    return NextResponse.next();
-  }
+  return new NextResponse(markdown, {
+    status: 200,
+    headers: {
+      "Cache-Control": "public, max-age=3600",
+      "Content-Signal": "ai-train=no, search=yes, ai-input=yes",
+      "Content-Type": "text/markdown; charset=utf-8",
+      Vary: "Accept",
+      "x-markdown-tokens": estimateTokens(markdown).toString(),
+    },
+  });
 }
 
 export const config = {
