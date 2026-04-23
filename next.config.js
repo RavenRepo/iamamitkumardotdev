@@ -20,7 +20,7 @@ const cspParts = [
   "frame-ancestors 'self'",
   "form-action 'self'",
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.mxpnl.com https://www.googletagmanager.com",
+  "script-src 'self' 'unsafe-inline' 'strict-dynamic' https://cdn.mxpnl.com https://www.googletagmanager.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://*.mixpanel.com https://*.google-analytics.com https://*.googletagmanager.com https://avatars.githubusercontent.com https://pbs.twimg.com https://assets.aceternity.com https://api.microlink.io",
@@ -51,7 +51,6 @@ const securityHeaders = [
   },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-XSS-Protection", value: "0" },
   { key: "Referrer-Policy", value: "origin-when-cross-origin" },
   {
     key: "Permissions-Policy",
@@ -60,6 +59,10 @@ const securityHeaders = [
   { key: "Content-Security-Policy", value: cspParts.join("; ") },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   { key: "Cross-Origin-Resource-Policy", value: "same-site" },
+  {
+    key: "Content-Signal",
+    value: "ai-train=no, search=yes, ai-input=yes",
+  },
 ];
 
 module.exports = {
@@ -84,6 +87,23 @@ module.exports = {
             key: "X-Robots-Tag",
             value:
               "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+          },
+        ],
+      },
+      {
+        source: "/",
+        headers: [
+          {
+            key: "Link",
+            value: [
+              '</sitemap.xml>; rel="sitemap"',
+              '</robots.txt>; rel="robots"',
+              '</blog>; rel="service-doc"',
+              '</api>; rel="service-desc"',
+              '</.well-known/api-catalog>; rel="api-catalog"',
+              '</.well-known/agent-skills/index.json>; rel="agent-skills"',
+              '</.well-known/mcp/server-card.json>; rel="mcp-server"',
+            ].join(", "),
           },
         ],
       },

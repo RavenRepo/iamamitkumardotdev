@@ -23,6 +23,7 @@ const envSchema = z.object({
   OPENCLAW_API_KEY: z.string().optional(),
 
   REDIS_URL: z.string().url().optional(),
+  ADMIN_USER_IDS: z.string().optional(),
 });
 
 type Env = z.infer<typeof envSchema>;

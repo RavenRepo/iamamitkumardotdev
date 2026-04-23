@@ -5,6 +5,7 @@ import { existsSync } from "fs";
 import { requireAdmin } from "@/lib/auth/authorize";
 import { fileTypeFromBuffer } from "file-type";
 import { rateLimit } from "@/lib/rate-limit";
+import { withCsrfProtection } from "@/lib/csrf";
 
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
@@ -17,7 +18,7 @@ async function ensureUploadsDir() {
   return uploadsDir;
 }
 
-export async function POST(request: NextRequest) {
+async function handleUpload(request: NextRequest) {
   try {
     const authResult = await requireAdmin(request);
     if (!authResult.authorized) {
@@ -95,3 +96,5 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export const POST = withCsrfProtection(handleUpload);

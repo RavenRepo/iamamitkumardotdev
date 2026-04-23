@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth/authorize";
 import { serializeTags, mapDbToPost } from "@/lib/blog";
 import { validateAndSanitizePostInput } from "@/lib/validation";
 import { sanitizeMarkdown } from "@/lib/security";
+import { withCsrfProtectionWithParams } from "@/lib/csrf";
 
 export async function GET(
   req: NextRequest,
@@ -31,9 +32,9 @@ export async function GET(
   return NextResponse.json(mapDbToPost(post));
 }
 
-export async function PUT(
+async function handlePut(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { authorized, session, response } = await requireAdmin(req);
   if (!authorized) return response;
@@ -137,9 +138,9 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
+async function handleDelete(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { authorized, session, response } = await requireAdmin(req);
   if (!authorized) return response;
@@ -174,3 +175,6 @@ export async function DELETE(
     );
   }
 }
+
+export const PUT = withCsrfProtectionWithParams(handlePut);
+export const DELETE = withCsrfProtectionWithParams(handleDelete);

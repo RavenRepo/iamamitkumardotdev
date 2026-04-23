@@ -2,14 +2,21 @@
 # deploy.sh — Build locally and deploy standalone bundle to EC2
 # Usage: ./deploy.sh
 # Optional: SKIP_BUILD=1 ./deploy.sh
+#
+# Environment variables (override defaults):
+#   EC2_HOST         - EC2 hostname or IP
+#   EC2_USER         - SSH username
+#   EC2_PEM_KEY      - Path to SSH private key
+#   APP_DIR          - Remote application directory
+#   APP_NAME         - PM2 process name
 
 set -euo pipefail
 
-EC2_HOST="ec2-13-53-175-145.eu-north-1.compute.amazonaws.com"
-EC2_USER="ubuntu"
-APP_DIR="/var/www/devamitkumar"
-PEM_KEY="${HOME}/.ssh/jaipurfedora.pem"
-APP_NAME="iamamitkumar"
+EC2_HOST="${EC2_HOST:-ec2-13-53-175-145.eu-north-1.compute.amazonaws.com}"
+EC2_USER="${EC2_USER:-ubuntu}"
+APP_DIR="${APP_DIR:-/var/www/devamitkumar}"
+PEM_KEY="${EC2_PEM_KEY:-${HOME}/.ssh/jaipurfedora.pem}"
+APP_NAME="${APP_NAME:-iamamitkumar}"
 HEALTHCHECK_URL="${HEALTHCHECK_URL:-https://iamamitkumar.dev}"
 HEALTHCHECK_ATTEMPTS="${HEALTHCHECK_ATTEMPTS:-5}"
 HEALTHCHECK_DELAY_SECONDS="${HEALTHCHECK_DELAY_SECONDS:-3}"

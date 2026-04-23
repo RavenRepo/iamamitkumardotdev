@@ -103,11 +103,23 @@ export function rateLimit(
   config: RateLimitConfig = DEFAULT_CONFIG
 ): { allowed: boolean; remaining: number; resetTime: number } {
   const clientId = getClientId(req);
-  
+
   if (env.REDIS_URL) {
-    return redisRateLimit(clientId, config) as any;
+    const result = redisRateLimit(clientId, config);
+    if (result instanceof Promise) {
+      console.warn(
+        "[rate-limit] Synchronous rateLimit called with Redis; use rateLimitAsync instead"
+      );
+    }
+    return result as any;
   }
-  
+
+  if (process.env.NODE_ENV === "production") {
+    console.warn(
+      "[rate-limit] Redis not configured in production. Rate limits are per-process and may be bypassed."
+    );
+  }
+
   return memoryRateLimit(clientId, config);
 }
 
@@ -116,11 +128,17 @@ export async function rateLimitAsync(
   config: RateLimitConfig = DEFAULT_CONFIG
 ): Promise<{ allowed: boolean; remaining: number; resetTime: number }> {
   const clientId = getClientId(req);
-  
+
   if (env.REDIS_URL) {
     return redisRateLimit(clientId, config);
   }
-  
+
+  if (process.env.NODE_ENV === "production") {
+    console.warn(
+      "[rate-limit] Redis not configured in production. Rate limits are per-process and may be bypassed."
+    );
+  }
+
   return memoryRateLimit(clientId, config);
 }
 

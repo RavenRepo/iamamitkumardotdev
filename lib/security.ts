@@ -24,6 +24,15 @@ const DEFAULT_ALLOWED_ATTRIBUTES: Record<string, string[]> = {
   "*": ["class", "id", "style"],
 };
 
+const FORBIDDEN_TAGS = [
+  "script", "style", "iframe", "object", "embed", "form", "input",
+];
+
+const FORBIDDEN_ATTR = [
+  "onerror", "onload", "onclick", "onmouseover", "onfocus", "onblur",
+  "onmouseout", "onmouseenter", "onmouseleave", "onkeydown", "onkeyup",
+];
+
 export function sanitizeHtml(html: string, options: SanitizeOptions = {}): string {
   const {
     allowedTags = DEFAULT_ALLOWED_TAGS,
@@ -35,9 +44,8 @@ export function sanitizeHtml(html: string, options: SanitizeOptions = {}): strin
     ALLOWED_ATTR: Object.values(allowedAttributes).flat(),
     ALLOW_DATA_ATTR: false,
     ADD_ATTR: ["target", "rel"],
-    FORBID_TAGS: ["script", "style", "iframe", "object", "embed", "form", "input"],
-    FORBID_ATTR: ["onerror", "onload", "onclick", "onmouseover", "onfocus", "onblur"],
-    ADD_TAGS: ["input"],
+    FORBID_TAGS: FORBIDDEN_TAGS,
+    FORBID_ATTR: FORBIDDEN_ATTR,
     WHOLE_DOCUMENT: false,
     RETURN_TRUSTED_TYPE: false,
   });
@@ -45,21 +53,16 @@ export function sanitizeHtml(html: string, options: SanitizeOptions = {}): strin
 
 export function sanitizeMarkdown(markdown: string): string {
   if (!markdown) return "";
-  
-  let sanitized = markdown;
 
-  sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
-  sanitized = sanitized.replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "");
-  sanitized = sanitized.replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "");
-  sanitized = sanitized.replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "");
-  sanitized = sanitized.replace(/<form\b[^<]*(?:(?!<\/form>)<[^<]*)*<\/form>/gi, "");
-  
-  sanitized = sanitized.replace(/\s*on\w+\s*=\s*(["'])[^"']*\1/gi, "");
-  
-  sanitized = sanitized.replace(/javascript:/gi, "");
-  sanitized = sanitized.replace(/data:/gi, "");
-  
-  return sanitized;
+  return DOMPurify.sanitize(markdown, {
+    ALLOWED_TAGS: DEFAULT_ALLOWED_TAGS,
+    ALLOWED_ATTR: Object.values(DEFAULT_ALLOWED_ATTRIBUTES).flat(),
+    ALLOW_DATA_ATTR: false,
+    FORBID_TAGS: FORBIDDEN_TAGS,
+    FORBID_ATTR: FORBIDDEN_ATTR,
+    WHOLE_DOCUMENT: false,
+    RETURN_TRUSTED_TYPE: false,
+  });
 }
 
 const URL_SCHEMES = ["http", "https", "mailto", "tel"];

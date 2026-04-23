@@ -11,6 +11,18 @@ interface AuthResult {
   response: NextResponse;
 }
 
+const ADMIN_USER_IDS = process.env.ADMIN_USER_IDS
+  ? process.env.ADMIN_USER_IDS.split(",").map((id) => id.trim()).filter(Boolean)
+  : [];
+
+async function isAdminUser(userId: string): Promise<boolean> {
+  if (ADMIN_USER_IDS.length > 0) {
+    return ADMIN_USER_IDS.includes(userId);
+  }
+
+  return false;
+}
+
 export async function requireAuth(req: NextRequest): Promise<AuthResult> {
   const cookieStore = await cookies();
 
@@ -61,7 +73,11 @@ export async function requireAdmin(req: NextRequest): Promise<AuthResult> {
 
   if (!result.authorized) return result;
 
-  if (result.session!.user.role !== "admin") {
+  const userId = result.session!.user.id;
+  const hasRole = result.session!.user.role === "admin";
+  const isInAllowlist = await isAdminUser(userId);
+
+  if (!hasRole && !isInAllowlist) {
     return {
       authorized: false,
       session: result.session,

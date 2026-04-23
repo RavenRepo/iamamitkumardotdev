@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimitAsync } from "@/lib/rate-limit";
 import { validateNewsletterInput } from "@/lib/validation";
 import { supabaseAdmin } from "@/lib/supabase";
+import { withCsrfProtection } from "@/lib/csrf";
 
-export async function POST(request: NextRequest) {
+async function handleSubscribe(request: NextRequest) {
   const limitResult = await rateLimitAsync(request, {
     windowMs: 60_000,
     maxRequests: 5,
@@ -73,3 +74,5 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export const POST = withCsrfProtection(handleSubscribe);

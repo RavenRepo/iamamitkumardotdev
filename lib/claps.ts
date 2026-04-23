@@ -15,7 +15,6 @@ type ClapState = {
 
 type GlobalClapsState = {
   pool?: Pool;
-  initPromise?: Promise<void>;
   memory?: Map<string, Map<string, number>>;
 };
 
@@ -34,7 +33,12 @@ function getPool() {
     throw new Error("DATABASE_URL is not configured");
   }
 
-  state.pool = new Pool({ connectionString });
+  state.pool = new Pool({
+    connectionString,
+    ssl: process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: true }
+      : undefined,
+  });
   return state.pool;
 }
 
@@ -65,32 +69,6 @@ function registerMemoryClap(input: ClapInput): ClapState {
   return getMemoryClapState(input.slug, input.visitorKey);
 }
 
-async function ensureClapTable() {
-  if (state.initPromise) {
-    await state.initPromise;
-    return;
-  }
-
-  state.initPromise = (async () => {
-    const pool = getPool();
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS blog_claps (
-        id BIGSERIAL PRIMARY KEY,
-        slug TEXT NOT NULL,
-        visitor_key TEXT NOT NULL,
-        ip TEXT,
-        user_agent TEXT,
-        count INTEGER NOT NULL DEFAULT 1,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        UNIQUE(slug, visitor_key)
-      );
-    `);
-  })();
-
-  await state.initPromise;
-}
-
 async function getTotalClaps(pool: Pool, slug: string): Promise<number> {
   const totalResult = await pool.query<{ total: string | null }>(
     `
@@ -112,7 +90,6 @@ export async function getClapState(
     return getMemoryClapState(slug, visitorKey);
   }
 
-  await ensureClapTable();
   const pool = getPool();
 
   const [userResult, totalClaps] = await Promise.all([
@@ -141,7 +118,6 @@ export async function registerClap(input: ClapInput): Promise<ClapState> {
     return registerMemoryClap(input);
   }
 
-  await ensureClapTable();
   const pool = getPool();
 
   await pool.query(

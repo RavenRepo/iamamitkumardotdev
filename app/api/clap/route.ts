@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { getClapState, registerClap } from "@/lib/claps";
 import { rateLimit } from "@/lib/rate-limit";
+import { withCsrfProtection } from "@/lib/csrf";
 
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const VISITOR_COOKIE_NAME = "clap_visitor_id";
@@ -59,7 +60,7 @@ function withVisitorCookie(
   return response;
 }
 
-export async function POST(request: NextRequest) {
+async function handleClapPost(request: NextRequest) {
   const limit = rateLimit(request, { windowMs: 60000, maxRequests: 20 });
   if (!limit.allowed) {
     return NextResponse.json(
@@ -103,6 +104,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 }
+
+export const POST = withCsrfProtection(handleClapPost);
 
 export async function GET(request: NextRequest) {
   const limit = rateLimit(request, { windowMs: 60000, maxRequests: 60 });
